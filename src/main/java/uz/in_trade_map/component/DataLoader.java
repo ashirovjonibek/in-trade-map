@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,7 +18,6 @@ import uz.in_trade_map.entity.*;
 import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.repository.*;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,13 +32,13 @@ public class DataLoader implements CommandLineRunner {
     String mode;
 
     @Value("classpath:data/region.json")
-    File region;
+    Resource region;
 
     @Value("classpath:data/district.json")
-    File district;
+    Resource district;
 
     @Value("classpath:data/quarter.json")
-    File quarter;
+    Resource quarter;
 
     @Autowired
     UserRepository userRepository;
@@ -71,7 +71,7 @@ public class DataLoader implements CommandLineRunner {
                     Collections.singleton(admin)
             ));
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readValue(region, JsonNode.class);
+            JsonNode jsonNode = objectMapper.readValue(region.getURL(), JsonNode.class);
             List<Region> regions = new ArrayList<>();
             List<District> districts = new ArrayList<>();
             List<Quarter> quarters = new ArrayList<>();
@@ -79,7 +79,7 @@ public class DataLoader implements CommandLineRunner {
                 regions.add(new Region(n.get("name_uz").textValue(), n.get("name_ru").textValue(), null, n.get("name_oz").textValue()));
             });
             List<Region> regionList = regionRepository.saveAll(regions);
-            jsonNode = objectMapper.readValue(district, JsonNode.class);
+            jsonNode = objectMapper.readValue(district.getURL(), JsonNode.class);
             jsonNode.forEach(n -> {
                 Region regionFl = regionList.stream().filter(region1 -> region1.getId().toString().equals(n.get("region_id").textValue())).collect(Collectors.toList()).get(0);
                 districts.add(new District(
@@ -91,7 +91,7 @@ public class DataLoader implements CommandLineRunner {
                 ));
             });
             List<District> districtList = districtRepository.saveAll(districts);
-            jsonNode = objectMapper.readValue(quarter, JsonNode.class);
+            jsonNode = objectMapper.readValue(quarter.getURL(), JsonNode.class);
             jsonNode.forEach(n -> {
                 List<District> districtId = districtList.stream().
                         filter(
