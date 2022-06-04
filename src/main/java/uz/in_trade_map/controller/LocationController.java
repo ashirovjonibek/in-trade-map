@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,15 @@ public class LocationController {
     LocationService locationService;
 
     @GetMapping
-    public HttpEntity<?> getAll(@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "20") int pageSize, @RequestParam(required = false) String expand) {
-        Pageable pageable = PageRequest.of(page - 1, pageSize);
-        return locationService.findAll(pageable, expand);
+    public HttpEntity<?> getAll(
+            @RequestParam(required = false) Integer regionId,
+            @RequestParam(required = false) Integer districtId,
+            @RequestParam(required = false) Integer quarterId,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "20") int size,
+            @RequestParam(required = false) String expand) {
+        return locationService.findAllBySpec(regionId, districtId, quarterId, address, size, page - 1, expand);
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")

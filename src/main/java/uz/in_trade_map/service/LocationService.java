@@ -2,9 +2,14 @@ package uz.in_trade_map.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import static org.springframework.data.jpa.domain.Specification.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.Location;
 import uz.in_trade_map.entity.Quarter;
 import uz.in_trade_map.payload.AllApiResponse;
@@ -12,6 +17,8 @@ import uz.in_trade_map.payload.ApiResponse;
 import uz.in_trade_map.payload.LocationRequest;
 import uz.in_trade_map.repository.LocationRepository;
 import uz.in_trade_map.repository.QuarterRepository;
+
+import static uz.in_trade_map.service.specifications.LocationSpecifications.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -118,5 +125,31 @@ public class LocationService {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error delete location", e.getMessage());
         }
+    }
+
+    public ResponseEntity<?> findAllBySpec(Integer regionId, Integer districtId, Integer quarterId, String address, int size, int page, String expand) {
+        Pageable pageable = PageRequest.of(page, size == 0 ? (int) locationRepository.count() : size);
+        Page<Location> locations = locationRepository.findAll(
+                where(findByRegionId(regionId))
+                        .and(findByDistrictId(districtId))
+                        .and(findByQuarterId(quarterId))
+                        .and(findByAddress(address)),
+                pageable
+        );
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("items", locations.stream().map(location -> {
+            Map<String, Object> res = new HashMap<>();
+            res.put("address", location.getAddress());
+            res.put("lat", location.getLat());
+            res.put("lng", location.getLng());
+            res.put("id", location.getId());
+            if (expand != null && expand.contains("quarter")) {
+                res.put("quarter", location.getQuarter());
+            }
+            return res;
+        }).collect(Collectors.toList()));
+        resp.put("meta", new Meta(locations.getTotalElements(), locations.getTotalPages(), page + 1, size));
+
+        return AllApiResponse.response(1, "success", resp);
     }
 }
