@@ -14,20 +14,21 @@ import uz.in_trade_map.entity.Location;
 import uz.in_trade_map.entity.Quarter;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.payload.ApiResponse;
-import uz.in_trade_map.payload.LocationRequest;
+import uz.in_trade_map.utils.request_objects.LocationRequest;
 import uz.in_trade_map.repository.LocationRepository;
 import uz.in_trade_map.repository.QuarterRepository;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
+import uz.in_trade_map.utils.validator.Validator;
 
 import static uz.in_trade_map.service.specifications.LocationSpecifications.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class LocationService {
+public class LocationService extends Validator<LocationRequest> {
     @Autowired
     LocationRepository locationRepository;
 
@@ -35,77 +36,51 @@ public class LocationService {
     QuarterRepository quarterRepository;
 
     public ResponseEntity<?> saveOrEdit(LocationRequest request) {
-        Optional<Quarter> quarterOptional = quarterRepository.findById(request.getQuarterId());
-        if (quarterOptional.isPresent()) {
-            try {
-                Location location = null;
-                if (request.getId() != null) {
-                    Optional<Location> byId = locationRepository.findById(request.getId());
-                    if (byId.isPresent()) {
-                        Location location1 = byId.get();
-                        if (request.getLat() != null) {
-                            location1.setLat(request.getLat());
+        Map<String, Object> valid = valid(request);
+        if (valid.size() == 0) {
+
+            Optional<Quarter> quarterOptional = quarterRepository.findById(request.getQuarterId());
+            if (quarterOptional.isPresent()) {
+                try {
+                    Location location = null;
+                    if (request.getId() != null) {
+                        Optional<Location> byId = locationRepository.findById(request.getId());
+                        if (byId.isPresent()) {
+                            Location location1 = byId.get();
+                            if (request.getLat() != null) {
+                                location1.setLat(request.getLat());
+                            }
+                            if (request.getLng() != null) {
+                                location1.setLng(request.getLng());
+                            }
+                            location1.setQuarter(quarterOptional.get());
+                            location1.setAddress(request.getAddress());
+                            location = location1;
+                        } else {
+                            return ResponseEntity.status(404).body(new ApiResponse(0, "Location not found with id"));
                         }
-                        if (request.getLng() != null) {
-                            location1.setLng(request.getLng());
-                        }
-                        location1.setQuarter(quarterOptional.get());
-                        location1.setAddress(request.getAddress());
-                        location = location1;
                     } else {
-                        return ResponseEntity.status(404).body(new ApiResponse(0, "Location not found with id"));
+                        location = LocationRequest.request(request);
+                        location.setQuarter(quarterOptional.get());
                     }
-                } else {
-                    location = LocationRequest.request(request);
-                    location.setQuarter(quarterOptional.get());
+                    Location save = locationRepository.save(location);
+                    return ResponseEntity.ok(new ApiResponse(1, "Saved successfully", save));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(500).body(new ApiResponse(0, "Error save location", e.getMessage()));
                 }
-                Location save = locationRepository.save(location);
-                return ResponseEntity.ok(new ApiResponse(1, "Saved successfully", save));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(500).body(new ApiResponse(0, "Error save location", e.getMessage()));
+            } else {
+                return ResponseEntity.status(404).body(new ApiResponse(0, "Quarter not found with id"));
             }
-        } else {
-            return ResponseEntity.status(404).body(new ApiResponse(0, "Quarter not found with id"));
-        }
+        }else return AllApiResponse.response(422,0,"Validator errors",valid);
 
-    }
-
-    public ResponseEntity<?> findAll(Pageable pageable, String expand) {
-        try {
-            Page<Location> locationPage = locationRepository.findAll(pageable);
-            List<Map<String, Object>> locations = locationPage.stream().map(location -> {
-                Map<String, Object> loc = new HashMap<>();
-                loc.put("id", location.getId());
-                loc.put("address", location.getAddress());
-                loc.put("lat", location.getLat());
-                loc.put("lng", location.getLng());
-                if (expand != null && expand.contains("quarter")) {
-                    loc.put("quarter", location.getQuarter());
-                }
-                return loc;
-            }).collect(Collectors.toList());
-            return ResponseEntity.ok(new ApiResponse(1, "success", locations));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(new ApiResponse(0, "error"));
-        }
     }
 
     public ResponseEntity<?> findById(Integer id, String expand) {
         try {
             Optional<Location> byId = locationRepository.findById(id);
             if (byId.isPresent()) {
-                Map<String, Object> location = new HashMap<>();
-                location.put("id", byId.get().getId());
-                location.put("address", byId.get().getAddress());
-                location.put("lat", byId.get().getLat());
-                location.put("lng", byId.get().getLng());
-                if (expand != null && expand.contains("quarter")) {
-                    location.put("quarter", byId.get().getQuarter());
-                }
-                return AllApiResponse.response(1, "Success", location);
+                return AllApiResponse.response(1, "Success", DtoConverter.locationDto(byId.get(),expand));
             } else return AllApiResponse.response(404, 0, "Location not found with id");
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,17 +112,7 @@ public class LocationService {
                 pageable
         );
         Map<String, Object> resp = new HashMap<>();
-        resp.put("items", locations.stream().map(location -> {
-            Map<String, Object> res = new HashMap<>();
-            res.put("address", location.getAddress());
-            res.put("lat", location.getLat());
-            res.put("lng", location.getLng());
-            res.put("id", location.getId());
-            if (expand != null && expand.contains("quarter")) {
-                res.put("quarter", location.getQuarter());
-            }
-            return res;
-        }).collect(Collectors.toList()));
+        resp.put("items", locations.stream().map(location -> DtoConverter.locationDto(location,expand)).collect(Collectors.toList()));
         resp.put("meta", new Meta(locations.getTotalElements(), locations.getTotalPages(), page + 1, size));
 
         return AllApiResponse.response(1, "success", resp);

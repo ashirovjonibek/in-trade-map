@@ -18,6 +18,22 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String nameUz;
+
+    public Role(String nameUz, String nameRu, String nameUzCry, String nameEn, RoleName roleName) {
+        this.nameUz = nameUz;
+        this.nameRu = nameRu;
+        this.nameUzCry = nameUzCry;
+        this.nameEn = nameEn;
+        this.roleName = roleName;
+    }
+
+    private String nameRu;
+
+    private String nameUzCry;
+
+    private String nameEn;
+
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
     private RoleName roleName;

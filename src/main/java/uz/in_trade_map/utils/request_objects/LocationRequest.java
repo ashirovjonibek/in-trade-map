@@ -1,10 +1,10 @@
-package uz.in_trade_map.payload;
+package uz.in_trade_map.utils.request_objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 import uz.in_trade_map.entity.Location;
+import uz.in_trade_map.utils.validator.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -12,14 +12,14 @@ import uz.in_trade_map.entity.Location;
 public class LocationRequest {
     private Integer id;
 
-    @NonNull
+    @NotNull(message = "Address is not be empty!",minLength = 15)
     private String address;
 
     private Float lat;
 
     private Float lng;
 
-    @NonNull
+    @NotNull(message = "QuarterId is not be empty!")
     private Integer quarterId;
 
     public static Location request(LocationRequest request) {

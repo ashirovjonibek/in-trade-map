@@ -61,7 +61,12 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (mode.equals("always")) {
-            Role admin = roleRepository.save(new Role(RoleName.ROLE_ADMIN));
+            List<Role> roles = new ArrayList<>();
+            roles.add(new Role("Tekshiruvchi admin", "Администратор чекера", "Текширувчи админ", "Checker admin", RoleName.ROLE_CHECKER_ADMIN));
+            roles.add(new Role("Direktor", "Директор", "Директор", "Director", RoleName.ROLE_COMPANY_DIRECTOR));
+            roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", RoleName.ROLE_WRITER));
+            Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", RoleName.ROLE_ADMIN));
+            roleRepository.saveAll(roles);
             userRepository.save(new User(
                     "Admin",
                     "Admin",

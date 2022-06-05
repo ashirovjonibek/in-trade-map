@@ -1,15 +1,11 @@
 package uz.in_trade_map.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import uz.in_trade_map.payload.LocationRequest;
+import uz.in_trade_map.utils.request_objects.LocationRequest;
 import uz.in_trade_map.service.LocationService;
 
 @RestController
