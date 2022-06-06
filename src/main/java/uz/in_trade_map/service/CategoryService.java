@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import uz.in_trade_map.entity.Category;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.CategoryRepository;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
 import uz.in_trade_map.utils.request_objects.CategoryRequest;
 import uz.in_trade_map.utils.validator.Validator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -58,5 +60,34 @@ public class CategoryService extends Validator<CategoryRequest> {
                 }
             } else return AllApiResponse.response(422, 0, "Validator errors", valid);
         } else return AllApiResponse.response(404, 0, "Category not found for edit!");
+    }
+
+    public ResponseEntity<?> getOne(Integer id, String expand) {
+        try {
+            Optional<Category> byId = categoryRepository.findById(id);
+            if (byId.isPresent()) {
+                Category category = byId.get();
+                Map<String, Object> stringObjectMap = DtoConverter.categoryDto(category, expand);
+                if (expand.contains("children")) {
+                    List<Category> all = categoryRepository.findAllByCategoryId(category.getId());
+                    stringObjectMap.put("children", all.stream().map(all1 -> DtoConverter.categoryDto(all1, expand)));
+                }
+                return AllApiResponse.response(1, "Success", stringObjectMap);
+            } else {
+                return AllApiResponse.response(404, 0, "Category not found with id!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get one category", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getAll(String expand) {
+        try {
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get all category", e.getMessage());
+        }
     }
 }

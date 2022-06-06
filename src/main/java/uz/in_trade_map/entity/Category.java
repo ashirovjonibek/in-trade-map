@@ -58,8 +58,8 @@ public class Category {
     private Timestamp updatedAt;
 
     @CreatedBy
-    private UUID createdBy;
+    private User createdBy;
 
     @LastModifiedBy
-    private UUID updatedBy;
+    private User updatedBy;
 }

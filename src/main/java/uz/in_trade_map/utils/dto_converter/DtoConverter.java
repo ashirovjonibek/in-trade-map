@@ -1,6 +1,7 @@
 package uz.in_trade_map.utils.dto_converter;
 
 import org.springframework.stereotype.Component;
+import uz.in_trade_map.entity.Category;
 import uz.in_trade_map.entity.Location;
 import uz.in_trade_map.entity.Role;
 
@@ -27,7 +28,49 @@ public class DtoConverter {
         loc.put("lng", location.getLng());
         if (expand != null && expand.contains("quarter")) {
             loc.put("quarter", location.getQuarter());
+        } else {
+            loc.put("quarterId", location.getQuarter().getId());
         }
         return loc;
+    }
+
+    public static Map<String, Object> categoryDto(Category category, String expand) {
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("id", category.getId());
+        resp.put("nameUz", category.getNameUz());
+        resp.put("nameRu", category.getNameRu());
+        resp.put("nameEn", category.getNameEn());
+        resp.put("nameUzCry", category.getNameUzCry());
+        resp.put("descriptionUz", category.getDescriptionUz());
+        resp.put("descriptionRu", category.getDescriptionRu());
+        resp.put("descriptionEn", category.getDescriptionEn());
+        resp.put("descriptionUzCry", category.getDescriptionUzCry());
+        resp.put("createdAt", category.getCreatedAt());
+        resp.put("updatedAt", category.getUpdatedAt());
+        if (expand != null) {
+            if (category.getCreatedBy() != null && expand.contains("createdBy")) {
+                resp.put("createdBy", category.getCreatedBy());
+            }
+
+            if (category.getUpdatedBy() != null && expand.contains("updatedBy")) {
+                resp.put("updatedBy", category.getUpdatedBy());
+            }
+
+            if (category.getCategory() != null && expand.contains("category")) {
+                resp.put("category", category.getCategory());
+            }
+        }
+        if (category.getCreatedBy() != null) {
+            resp.put("createdById", category.getCreatedBy().getId());
+        }
+
+        if (category.getUpdatedBy() != null) {
+            resp.put("updatedById", category.getUpdatedBy().getId());
+        }
+
+        if (category.getCategory() != null) {
+            resp.put("categoryId", category.getCategory().getId());
+        }
+        return resp;
     }
 }
