@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import uz.in_trade_map.entity.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -33,14 +34,10 @@ public abstract class AbsEntity {
     private Timestamp updatedAt;
 
     @CreatedBy
-    @Column(name = "created_by_id")
-    private UUID createdBy;
+    private User createdBy;
 
     @LastModifiedBy
-    @Column(name = "updated_by_id")
-    private UUID updatedBy;
-
-    private String description;
+    private User updatedBy;
 
     private boolean active=true;
 

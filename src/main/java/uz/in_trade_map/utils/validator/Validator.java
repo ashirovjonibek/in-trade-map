@@ -30,7 +30,7 @@ public class Validator<T> {
                         }
                     } else if (notNull.maxLength() != -1) {
                         String val = (String) o;
-                        if (val.length() > notNull.minLength()) {
+                        if (val.length() > notNull.maxLength()) {
                             err.add("The " + field.getName() + " value should not exceed " + notNull.maxLength() + " characters");
                         }
                     }

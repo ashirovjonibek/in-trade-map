@@ -22,9 +22,9 @@ public class UserDto {
 
     private Timestamp updatedAt;
 
-    private UUID createdBy;
+    private UUID createdById;
 
-    private UUID updatedBy;
+    private UUID updatedById;
 
     private String firstName;
 
@@ -39,14 +39,14 @@ public class UserDto {
     public static UserDto response(User user) {
         UserDto userDto = new UserDto();
         if (user.getCreatedAt() != null) userDto.setCreatedAt(user.getCreatedAt());
-        if (user.getCreatedBy() != null) userDto.setCreatedBy(user.getCreatedBy());
+        if (user.getCreatedBy() != null) userDto.setCreatedById(user.getCreatedBy().getId());
         userDto.setFirstName(user.getFirstName());
         userDto.setId(user.getId());
         userDto.setLastName(user.getLastName());
         userDto.setPhoneNumber(user.getPhoneNumber());
         userDto.setRoles(user.getRoles().stream().map(Role::getAuthority).collect(Collectors.toList()));
         if (user.getUpdatedAt() != null) userDto.setUpdatedAt(user.getUpdatedAt());
-        if (user.getUpdatedBy() != null) userDto.setUpdatedBy(user.getUpdatedBy());
+        if (user.getUpdatedBy() != null) userDto.setUpdatedById(user.getUpdatedBy().getId());
         userDto.setUsername(user.getUsername());
         return userDto;
     }

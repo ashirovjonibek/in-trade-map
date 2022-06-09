@@ -36,7 +36,6 @@ public class CategoryRequest {
     @NotNull(message = "The descriptionUzCry field must not be empty!", maxLength = 1000)
     private String descriptionUzCry;
 
-    @NotNull(message = "The categoryId field must not be empty!")
     private Integer categoryId;
 
     public static Category request(CategoryRequest request) {
