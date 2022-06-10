@@ -36,7 +36,7 @@ public class CategoryService extends Validator<CategoryRequest> {
             }
             try {
                 Category save = categoryRepository.save(category);
-                return AllApiResponse.response(1, "Category successfully saved!", DtoConverter.categoryDto(save,null));
+                return AllApiResponse.response(1, "Category successfully saved!", DtoConverter.categoryDto(save, null));
             } catch (Exception e) {
                 e.printStackTrace();
                 return AllApiResponse.response(500, 0, "Error saved category", e.getMessage());
@@ -50,6 +50,7 @@ public class CategoryService extends Validator<CategoryRequest> {
             Map<String, Object> valid = valid(request);
             if (valid.size() == 0) {
                 Category category = CategoryRequest.request(request);
+                category.setId(request.getId());
                 if (request.getCategoryId() != null) {
                     Optional<Category> byId = categoryRepository.findById(request.getCategoryId());
                     if (byId.isPresent()) {
@@ -58,7 +59,7 @@ public class CategoryService extends Validator<CategoryRequest> {
                 }
                 try {
                     Category save = categoryRepository.save(category);
-                    return AllApiResponse.response(1, "Category successfully saved!", save);
+                    return AllApiResponse.response(1, "Category successfully updated!", DtoConverter.categoryDto(save, null));
                 } catch (Exception e) {
                     e.printStackTrace();
                     return AllApiResponse.response(500, 0, "Error saved category", e.getMessage());
@@ -102,9 +103,23 @@ public class CategoryService extends Validator<CategoryRequest> {
         }
     }
 
+    public ResponseEntity<?> getAllByCategoryId(Integer id, Pageable pageable, String expand) {
+        try {
+            Page<Category> all = categoryRepository.findAllByCategoryIdAndActiveTrue(id, pageable);
+            List<Map<String, Object>> collect = all.stream().map(category -> DtoConverter.categoryDto(category, expand)).collect(Collectors.toList());
+            Map<String, Object> response = new HashMap<>();
+            response.put("items", collect);
+            response.put("meta", new Meta(all.getTotalElements(), all.getTotalPages(), pageable.getPageNumber() + 1, pageable.getPageSize()));
+            return AllApiResponse.response(1, "Success", response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get all categories", e.getMessage());
+        }
+    }
+
     public ResponseEntity<?> delete(Integer id) {
         try {
-            Optional<Category> byId = categoryRepository.findById(id);
+            Optional<Category> byId = categoryRepository.findByIdAndActiveTrue(id);
             if (byId.isPresent()) {
                 Category category = byId.get();
                 category.setActive(false);

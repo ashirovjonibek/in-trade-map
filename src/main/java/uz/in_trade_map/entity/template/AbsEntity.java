@@ -34,6 +34,7 @@ public abstract class AbsEntity {
     private Timestamp updatedAt;
 
     @CreatedBy
+    @Column(name = "createdBy")
     private User createdBy;
 
     @LastModifiedBy

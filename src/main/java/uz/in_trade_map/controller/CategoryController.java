@@ -2,6 +2,7 @@ package uz.in_trade_map.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,13 @@ public class CategoryController {
     @GetMapping
     public HttpEntity<?> getAll(
             @RequestParam(required = false) String expand,
+            @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false, defaultValue = "20") int size,
             @RequestParam(required = false, defaultValue = "1") int page
     ) {
         if (size == 0) size = Math.toIntExact(categoryService.getCategoryCount());
-        return categoryService.getAll(PageRequest.of(page - 1, size), expand);
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return categoryId == null ? categoryService.getAll(pageable, expand) : categoryService.getAllByCategoryId(categoryId, pageable, expand);
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
