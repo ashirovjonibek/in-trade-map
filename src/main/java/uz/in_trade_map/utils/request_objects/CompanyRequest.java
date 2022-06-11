@@ -4,19 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import uz.in_trade_map.entity.Attachment;
-import uz.in_trade_map.entity.ContactData;
-import uz.in_trade_map.entity.Quarter;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeArray;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
-
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.io.File;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
