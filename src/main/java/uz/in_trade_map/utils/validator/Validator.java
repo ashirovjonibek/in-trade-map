@@ -1,11 +1,16 @@
 package uz.in_trade_map.utils.validator;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import uz.in_trade_map.utils.validator.annotations.Email;
+import uz.in_trade_map.utils.validator.annotations.FieldTypeArray;
+import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class Validator<T> {
@@ -17,6 +22,8 @@ public class Validator<T> {
             List<String> err = new ArrayList<>();
             NotNull notNull = field.getAnnotation(NotNull.class);
             Email email = field.getAnnotation(Email.class);
+            FieldTypeFile fieldTypeFile = field.getAnnotation(FieldTypeFile.class);
+            FieldTypeArray fieldTypeArray = field.getAnnotation(FieldTypeArray.class);
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
@@ -43,6 +50,153 @@ public class Validator<T> {
                         }
                     }
                 }
+                if (fieldTypeFile != null && fieldTypeArray == null) {
+                    if (o != null) {
+                        MultipartFile o1 = null;
+                        if (o instanceof MultipartFile) {
+                            o1 = (MultipartFile) o;
+                            String filename = o1.getOriginalFilename();
+                            String[] split = filename.split(".");
+                            if (!fieldTypeFile.extension().equals("*")
+                                    &&split.length>0
+                                    &&!fieldTypeFile.extension().contains(split[split.length-1])){
+                                err.add("The file type must be "+fieldTypeFile.extension());
+                            }
+                            if (fieldTypeFile.size()!=-1&&fieldTypeFile.size()<o1.getSize()){
+                                err.add("The file size must be less than "+fieldTypeFile.size()+" bytes");
+                            }
+                        } else
+                            err.add("Field type not containing file!");
+                    }
+                }
+                if (fieldTypeFile == null && fieldTypeArray != null) {
+                    if (o != null) {
+                        if (o instanceof Arrays){
+                            List<Object> objects = Arrays.asList(o);
+                            if (fieldTypeArray.maxLength()!=-1&&objects.size()>fieldTypeArray.maxLength()){
+                                err.add("The length of the list should not exceed "+fieldTypeArray.maxLength());
+                            }
+                            if (fieldTypeArray.minLength()!=-1&&objects.size()<fieldTypeArray.minLength()){
+                                err.add("The length of the list should not be less than "+fieldTypeArray.minLength());
+                            }
+                        }
+                    }
+                }
+
+                if (fieldTypeFile != null && fieldTypeArray != null) {
+                    if (o != null) {
+                        if (o instanceof Arrays){
+                            List<Object> objects = Collections.singletonList(o);
+                            if (fieldTypeArray.maxLength()!=-1&&objects.size()>fieldTypeArray.maxLength()){
+                                err.add("The length of the list should not exceed "+fieldTypeArray.maxLength());
+                            }else if (fieldTypeArray.maxLength()!=-1&&objects.size()<=fieldTypeArray.maxLength()){
+                                List<List<String>> collect = objects.stream().map(object -> {
+                                    List<String> typeErr = new ArrayList<>();
+                                    if (object != null) {
+                                        MultipartFile o1 = null;
+                                        if (object instanceof MultipartFile) {
+                                            o1 = (MultipartFile) object;
+                                            String filename = o1.getOriginalFilename();
+                                            assert filename != null;
+                                            String[] split = filename.split(".");
+                                            if (!fieldTypeFile.extension().equals("*")
+                                                    && split.length > 0
+                                                    && !fieldTypeFile.extension().contains(split[split.length - 1])) {
+                                                typeErr.add("The file type must be " + fieldTypeFile.extension());
+                                            }
+                                            if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
+                                                typeErr.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                                            }
+                                        } else
+                                            typeErr.add("Field type not containing file!");
+                                    }
+                                    return typeErr;
+                                }).collect(Collectors.toList());
+                                List<List<String>> listList = collect.stream().filter(strings -> strings.size() > 0).collect(Collectors.toList());
+                                listList.forEach(err::addAll);
+                            }else if (fieldTypeArray.maxLength()==-1){
+                                List<List<String>> collect = objects.stream().map(object -> {
+                                    List<String> typeErr = new ArrayList<>();
+                                    if (object != null) {
+                                        MultipartFile o1 = null;
+                                        if (object instanceof MultipartFile) {
+                                            o1 = (MultipartFile) object;
+                                            String filename = o1.getOriginalFilename();
+                                            assert filename != null;
+                                            String[] split = filename.split(".");
+                                            if (!fieldTypeFile.extension().equals("*")
+                                                    && split.length > 0
+                                                    && !fieldTypeFile.extension().contains(split[split.length - 1])) {
+                                                typeErr.add("The file type must be " + fieldTypeFile.extension());
+                                            }
+                                            if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
+                                                typeErr.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                                            }
+                                        } else
+                                            typeErr.add("Field type not containing file!");
+                                    }
+                                    return typeErr;
+                                }).collect(Collectors.toList());
+                                List<List<String>> listList = collect.stream().filter(strings -> strings.size() > 0).collect(Collectors.toList());
+                                listList.forEach(err::addAll);
+                            }
+                            if (fieldTypeArray.minLength()!=-1&&objects.size()<fieldTypeArray.minLength()){
+                                err.add("The length of the list should not be less than "+fieldTypeArray.minLength());
+                            }else if (fieldTypeArray.minLength()!=-1&&objects.size()>=fieldTypeArray.minLength()){
+                                List<List<String>> collect = objects.stream().map(object -> {
+                                    List<String> typeErr = new ArrayList<>();
+                                    if (object != null) {
+                                        MultipartFile o1 = null;
+                                        if (object instanceof MultipartFile) {
+                                            o1 = (MultipartFile) object;
+                                            String filename = o1.getOriginalFilename();
+                                            assert filename != null;
+                                            String[] split = filename.split(".");
+                                            if (!fieldTypeFile.extension().equals("*")
+                                                    && split.length > 0
+                                                    && !fieldTypeFile.extension().contains(split[split.length - 1])) {
+                                                typeErr.add("The file type must be " + fieldTypeFile.extension());
+                                            }
+                                            if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
+                                                typeErr.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                                            }
+                                        } else
+                                            typeErr.add("Field type not containing file!");
+                                    }
+                                    return typeErr;
+                                }).collect(Collectors.toList());
+                                List<List<String>> listList = collect.stream().filter(strings -> strings.size() > 0).collect(Collectors.toList());
+                                listList.forEach(err::addAll);
+                            }else if (fieldTypeArray.minLength()==-1){
+                                List<List<String>> collect = objects.stream().map(object -> {
+                                    List<String> typeErr = new ArrayList<>();
+                                    if (object != null) {
+                                        MultipartFile o1 = null;
+                                        if (object instanceof MultipartFile) {
+                                            o1 = (MultipartFile) object;
+                                            String filename = o1.getOriginalFilename();
+                                            assert filename != null;
+                                            String[] split = filename.split(".");
+                                            if (!fieldTypeFile.extension().equals("*")
+                                                    && split.length > 0
+                                                    && !fieldTypeFile.extension().contains(split[split.length - 1])) {
+                                                typeErr.add("The file type must be " + fieldTypeFile.extension());
+                                            }
+                                            if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
+                                                typeErr.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                                            }
+                                        } else
+                                            typeErr.add("Field type not containing file!");
+                                    }
+                                    return typeErr;
+                                }).collect(Collectors.toList());
+                                List<List<String>> listList = collect.stream().filter(strings -> strings.size() > 0).collect(Collectors.toList());
+                                listList.forEach(err::addAll);
+                            }
+                        }
+                    }
+                }
+
                 if (err.size() > 0) {
                     errors.put(field.getName(), err);
                 }
