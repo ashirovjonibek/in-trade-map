@@ -20,5 +20,14 @@ public class Attachment extends AbsEntity {
 
     private String extension;
 
+    private String contentType;
+
+    public Attachment(Long size, String fileName, String extension, String contentType) {
+        this.size = size;
+        this.fileName = fileName;
+        this.extension = extension;
+        this.contentType = contentType;
+    }
+
     private String filePath;
 }

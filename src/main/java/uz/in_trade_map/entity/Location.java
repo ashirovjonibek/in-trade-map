@@ -25,4 +25,11 @@ public class Location {
     private Float lat;
 
     private Float lng;
+
+    public Location(Quarter quarter, String address, Float lat, Float lng) {
+        this.quarter = quarter;
+        this.address = address;
+        this.lat = lat;
+        this.lng = lng;
+    }
 }

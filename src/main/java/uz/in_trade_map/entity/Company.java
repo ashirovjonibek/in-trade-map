@@ -1,9 +1,6 @@
 package uz.in_trade_map.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import uz.in_trade_map.entity.template.AbsNameEntity;
 
 import javax.persistence.Entity;
@@ -14,6 +11,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

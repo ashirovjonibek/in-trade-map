@@ -1,15 +1,20 @@
 package uz.in_trade_map.utils.dto_converter;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.Category;
 import uz.in_trade_map.entity.Location;
 import uz.in_trade_map.entity.Role;
 import uz.in_trade_map.entity.User;
+import uz.in_trade_map.utils.AuthUser;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DtoConverter {
+    Authentication user = AuthUser.getCurrentUser();
+
     public static Map<String, Object> roleDto(Role role) {
         Map<String, Object> resp = new HashMap<>();
         resp.put("id", role.getId());
@@ -62,7 +67,7 @@ public class DtoConverter {
                 }
             }
             return resp;
-        }else return null;
+        } else return null;
     }
 
 

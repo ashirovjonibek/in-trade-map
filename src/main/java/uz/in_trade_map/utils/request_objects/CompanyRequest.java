@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import uz.in_trade_map.entity.Company;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeArray;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
@@ -40,14 +41,14 @@ public class CompanyRequest {
 
     private String descriptionUzCry;
 
-    @FieldTypeFile(extension = ".img,.png",size = 1024*1024)
+    @FieldTypeFile(extension = ".jpg,.jpeg,.png",size = 1024*1024)
     private MultipartFile image;
 
-    @FieldTypeFile(extension = ".img,.png",size = 1024*1024)
+    @FieldTypeFile(extension = ".jpg,.jpeg,.png",size = 1024*1024)
     private MultipartFile logo;
 
     @FieldTypeArray(maxLength = 10)
-    @FieldTypeFile(extension = ".pdf,.img,.png",size = 5*1024*1024)
+    @FieldTypeFile(extension = ".pdf,.jpg,.jpeg,.png",size = 5*1024*1024)
     private MultipartFile[] certificates;
 
     private String socialMedia;
@@ -61,4 +62,22 @@ public class CompanyRequest {
     private Float lat;
 
     private Float lng;
+
+    public static Company convertCompany(CompanyRequest request){
+        return Company.builder()
+                .brandName(request.getBrandName())
+                .nameUz(request.getNameUz())
+                .nameRu(request.getNameRu())
+                .nameEn(request.getNameEn())
+                .nameUzCry(request.getNameUzCry())
+                .descriptionEn(request.getDescriptionEn())
+                .descriptionRu(request.getDescriptionRu())
+                .descriptionUz(request.getDescriptionUz())
+                .descriptionUzCry(request.getDescriptionUzCry())
+                .shortDescriptionEn(request.getShortDescriptionEn())
+                .shortDescriptionRu(request.getShortDescriptionRu())
+                .shortDescriptionUz(request.getShortDescriptionUz())
+                .shortDescriptionUzCry(request.getShortDescriptionUzCry())
+                .build();
+    }
 }
