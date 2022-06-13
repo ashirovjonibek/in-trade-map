@@ -56,15 +56,16 @@ public class Validator<T> {
                         if (o instanceof MultipartFile) {
                             o1 = (MultipartFile) o;
                             String filename = o1.getOriginalFilename();
-                            assert filename != null;
-                            String ext = filename.substring(filename.lastIndexOf("."));
-                            if (!fieldTypeFile.extension().equals("*")
-                                    && ext.length() > 0
-                                    && !fieldTypeFile.extension().contains(ext.toLowerCase())) {
-                                err.add("The file type must be " + fieldTypeFile.extension());
-                            }
-                            if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
-                                err.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                            if (filename != null&&!filename.equals("")) {
+                                String ext = filename.substring(filename.lastIndexOf("."));
+                                if (!fieldTypeFile.extension().equals("*")
+                                        && ext.length() > 0
+                                        && !fieldTypeFile.extension().contains(ext.toLowerCase())) {
+                                    err.add("The file type must be " + fieldTypeFile.extension());
+                                }
+                                if (fieldTypeFile.size() != -1 && fieldTypeFile.size() < o1.getSize()) {
+                                    err.add("The file size must be less than " + fieldTypeFile.size() + " bytes");
+                                }
                             }
                         } else
                             err.add("Field type not containing file!");

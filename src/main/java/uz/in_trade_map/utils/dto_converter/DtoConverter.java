@@ -3,14 +3,12 @@ package uz.in_trade_map.utils.dto_converter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import uz.in_trade_map.entity.Category;
-import uz.in_trade_map.entity.Location;
-import uz.in_trade_map.entity.Role;
-import uz.in_trade_map.entity.User;
+import uz.in_trade_map.entity.*;
 import uz.in_trade_map.utils.AuthUser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DtoConverter {
     Authentication user = AuthUser.getCurrentUser();
@@ -70,6 +68,45 @@ public class DtoConverter {
         } else return null;
     }
 
+    public static Map<String, Object> companyDto(Company company, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("nameUz", company.getNameUz());
+        response.put("nameRu", company.getNameRu());
+        response.put("nameEn", company.getNameUzCry());
+        response.put("brandName", company.getBrandName());
+        response.put("shortDescriptionUz", company.getShortDescriptionUz());
+        response.put("shortDescriptionRu", company.getShortDescriptionRu());
+        response.put("shortDescriptionEn", company.getShortDescriptionEn());
+        response.put("shortDescriptionUzCry", company.getShortDescriptionUzCry());
+        response.put("descriptionUz", company.getDescriptionUz());
+        response.put("descriptionRu", company.getDescriptionRu());
+        response.put("descriptionEn", company.getDescriptionEn());
+        response.put("descriptionUzCry", company.getDescriptionUzCry());
+        response.put("createdById", company.getCreatedBy() != null ? company.getCreatedBy().getId() : null);
+        response.put("updatedById", company.getUpdatedBy() != null ? company.getUpdatedBy().getId() : null);
+        response.put("logoId", company.getLogo() != null ? company.getLogo().getId() : null);
+        response.put("imageId", company.getImage() != null ? company.getImage().getId() : null);
+        response.put("certificates", company.getCertificates() != null
+                ? company.getCertificates().stream().map(cer -> cer.getId()).collect(Collectors.toList())
+                : null);
+        if (expand != null) {
+            if (expand.contains("contactData")) {
+                String s = null;
+                if (expand.contains("contactData.location.quarter")) s = "quarter";
+                Map<String, Object> contactData = new HashMap<>();
+                contactData.put("socialMedia", company.getData().getSocialMedia());
+                contactData.put("location", DtoConverter.locationDto(company.getData().getLocation(), s));
+                response.put("contactData", contactData);
+            }
+            if (expand.contains("createdBy") && company.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(company.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && company.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(company.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
 
     public static Map<String, Object> createdUpdatedDto(User user) {
         if (user != null) {
