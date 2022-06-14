@@ -58,14 +58,35 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     QuarterRepository quarterRepository;
 
+    @Autowired
+    PermissionsRepository permissionsRepository;
+
     @Override
     public void run(String... args) throws Exception {
         if (mode.equals("always")) {
+            List<Permissions> permissions = new ArrayList<>();
+            permissions.add(new Permissions("create_location", "Create location"));
+            permissions.add(new Permissions("update_location", "Update location"));
+            permissions.add(new Permissions("delete_location", "Delete location"));
+            permissions.add(new Permissions("create_category", "Create category"));
+            permissions.add(new Permissions("update_category", "Update category"));
+            permissions.add(new Permissions("delete_category", "Delete category"));
+            permissions.add(new Permissions("create_company", "Create company"));
+            permissions.add(new Permissions("update_company", "Update company"));
+            permissions.add(new Permissions("delete_company", "Delete company"));
+            permissions.add(new Permissions("create_role", "Create role"));
+            permissions.add(new Permissions("update_role", "Update role"));
+            permissions.add(new Permissions("get_all_role", "Get all role"));
+            permissions.add(new Permissions("get_one_role", "Get one role"));
+            permissions.add(new Permissions("delete_role", "delete role"));
+            permissions.add(new Permissions("permissions", "Permissions"));
+            List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
+
             List<Role> roles = new ArrayList<>();
-            roles.add(new Role("Tekshiruvchi admin", "Администратор чекера", "Текширувчи админ", "Checker admin", RoleName.ROLE_CHECKER_ADMIN));
-            roles.add(new Role("Direktor", "Директор", "Директор", "Director", RoleName.ROLE_COMPANY_DIRECTOR));
-            roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", RoleName.ROLE_WRITER));
-            Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", RoleName.ROLE_ADMIN));
+            roles.add(new Role("Tekshiruvchi admin", "Администратор чекера", "Текширувчи админ", "Checker admin", null, RoleName.ROLE_CHECKER_ADMIN.name()));
+            roles.add(new Role("Direktor", "Директор", "Директор", "Director", null, RoleName.ROLE_COMPANY_DIRECTOR.name()));
+            roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", null, RoleName.ROLE_WRITER.name()));
+            Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", permissions, RoleName.ROLE_ADMIN.name()));
             roleRepository.saveAll(roles);
             userRepository.save(new User(
                     "Admin",

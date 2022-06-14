@@ -27,13 +27,13 @@ public class CategoryController {
         return categoryId == null ? categoryService.getAll(pageable, expand) : categoryService.getAllByCategoryId(categoryId, pageable, expand);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('create_category')")
     @PostMapping
     public HttpEntity<?> save(@RequestBody CategoryRequest request) {
         return categoryService.save(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('update_category')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@PathVariable Integer id, @RequestBody CategoryRequest request) {
         request.setId(id);
@@ -45,7 +45,7 @@ public class CategoryController {
         return categoryService.getOne(id, expand);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('delete_category')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Integer id) {
         return categoryService.delete(id);

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.*;
 import uz.in_trade_map.utils.AuthUser;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,10 +71,13 @@ public class DtoConverter {
 
     public static Map<String, Object> companyDto(Company company, String expand) {
         Map<String, Object> response = new HashMap<>();
+        response.put("id", company.getId());
         response.put("nameUz", company.getNameUz());
         response.put("nameRu", company.getNameRu());
-        response.put("nameEn", company.getNameUzCry());
+        response.put("nameEn", company.getNameEn());
+        response.put("nameUzCry", company.getNameUzCry());
         response.put("brandName", company.getBrandName());
+        response.put("inn", company.getInn());
         response.put("shortDescriptionUz", company.getShortDescriptionUz());
         response.put("shortDescriptionRu", company.getShortDescriptionRu());
         response.put("shortDescriptionEn", company.getShortDescriptionEn());
@@ -103,6 +107,33 @@ public class DtoConverter {
             }
             if (expand.contains("updatedBy") && company.getUpdatedBy() != null) {
                 response.put("updatedBy", DtoConverter.createdUpdatedDto(company.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
+
+    public static Map<String, Object> roleDto(Role role, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", role.getId());
+        response.put("nameUz", role.getNameUz());
+        response.put("nameRu", role.getNameRu());
+        response.put("nameEn", role.getNameEn());
+        response.put("nameUzCry", role.getNameUzCry());
+        response.put("roleName", role.getRoleName());
+        response.put("createdAt", role.getCreatedAt());
+        response.put("updatedAt", role.getUpdatedAt());
+
+        if (expand != null) {
+            if (expand.contains("permissions") && role.getPermissions() != null) {
+                response.put("permissions", role.getPermissions().stream().map(Permissions::getName).collect(Collectors.toList()));
+            }
+
+            if (expand.contains("createdBy") && role.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(role.getCreatedBy()));
+            }
+
+            if (expand.contains("updatedBy") && role.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(role.getUpdatedBy()));
             }
         }
         return response;

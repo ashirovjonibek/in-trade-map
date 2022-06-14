@@ -42,6 +42,8 @@ public class Company extends AbsNameEntity {
 
     private String descriptionUzCry;
 
+    private String inn;
+
     @OneToOne(fetch = FetchType.EAGER)
     private Attachment image;
 

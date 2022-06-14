@@ -26,13 +26,13 @@ public class LocationController {
         return locationService.findAllBySpec(regionId, districtId, quarterId, address, size, page - 1, expand);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('create_location')")
     @PostMapping
     public HttpEntity<?> save(@RequestBody @Validated LocationRequest request) {
         return locationService.saveOrEdit(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('update_location')")
     @PutMapping
     public HttpEntity<?> edit(@RequestBody @Validated LocationRequest request) {
         return locationService.saveOrEdit(request);
@@ -43,7 +43,7 @@ public class LocationController {
         return locationService.findById(id, expand);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('delete_location')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Integer id) {
         return locationService.deleteLocation(id);

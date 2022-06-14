@@ -34,12 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtFilter jwtFilter(){
+    public JwtFilter jwtFilter() {
         return new JwtFilter();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -74,8 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/location/**",
                         "/api/category/**",
                         "/api/file/**",
+                        "/api/role/**",
                         "/api/company/**"
-                        )
+                )
                 .permitAll()
                 .antMatchers("/api/**")
                 .authenticated();

@@ -2,13 +2,12 @@ package uz.in_trade_map.entity;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uz.in_trade_map.entity.template.AbsEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -24,6 +23,8 @@ public class User extends AbsEntity implements UserDetails {
 
     private String lastName;
 
+    private String middleName;
+
     @Column(unique = true)
     private String phoneNumber;
 
@@ -32,13 +33,24 @@ public class User extends AbsEntity implements UserDetails {
 
     private String password;
 
+    private String email;
+
+    @ManyToOne
+    private Location location;
+
+    @OneToOne
+    private Attachment image;
+
+    @ManyToOne
+    private Company company;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    private boolean accountNonBlocked=true;
-    private boolean accountNonExpired=true;
-    private boolean credentialNonExpired=true;
-    private boolean enabled=true;
+    private boolean accountNonBlocked = true;
+    private boolean accountNonExpired = true;
+    private boolean credentialNonExpired = true;
+    private boolean enabled = true;
 
     public User(String firstName, String lastName, String phoneNumber, String username, String password, Set<Role> roles) {
         this.firstName = firstName;
@@ -49,9 +61,17 @@ public class User extends AbsEntity implements UserDetails {
         this.roles = roles;
     }
 
+    private Collection<SimpleGrantedAuthority> getPermissions() {
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        roles.forEach(role -> {
+            role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getName())));
+        });
+        return authorities;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return getPermissions();
     }
 
     @Override

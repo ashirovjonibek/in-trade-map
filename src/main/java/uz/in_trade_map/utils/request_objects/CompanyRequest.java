@@ -41,14 +41,17 @@ public class CompanyRequest {
 
     private String descriptionUzCry;
 
-    @FieldTypeFile(extension = ".jpg,.jpeg,.png",size = 1024*1024)
+    @NotNull(message = "Inn should not be empty!")
+    private String inn;
+
+    @FieldTypeFile(extension = ".jpg,.jpeg,.png", size = 1024 * 1024)
     private MultipartFile image;
 
-    @FieldTypeFile(extension = ".jpg,.jpeg,.png",size = 1024*1024)
+    @FieldTypeFile(extension = ".jpg,.jpeg,.png", size = 1024 * 1024)
     private MultipartFile logo;
 
     @FieldTypeArray(maxLength = 10)
-    @FieldTypeFile(extension = ".pdf,.jpg,.jpeg,.png",size = 5*1024*1024)
+    @FieldTypeFile(extension = ".pdf,.jpg,.jpeg,.png", size = 5 * 1024 * 1024)
     private MultipartFile[] certificates;
 
     private String socialMedia;
@@ -63,7 +66,7 @@ public class CompanyRequest {
 
     private Float lng;
 
-    public static Company convertCompany(CompanyRequest request){
+    public static Company convertCompany(CompanyRequest request) {
         return Company.builder()
                 .brandName(request.getBrandName())
                 .nameUz(request.getNameUz())
@@ -78,6 +81,7 @@ public class CompanyRequest {
                 .shortDescriptionRu(request.getShortDescriptionRu())
                 .shortDescriptionUz(request.getShortDescriptionUz())
                 .shortDescriptionUzCry(request.getShortDescriptionUzCry())
+                .inn(request.getInn())
                 .build();
     }
 }
