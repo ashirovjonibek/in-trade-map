@@ -19,10 +19,7 @@ import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.repository.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,6 +77,11 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("get_one_role", "Get one role"));
             permissions.add(new Permissions("delete_role", "delete role"));
             permissions.add(new Permissions("permissions", "Permissions"));
+            permissions.add(new Permissions("get_all_user", "Get all user"));
+            permissions.add(new Permissions("get_one_user", "Get one user"));
+            permissions.add(new Permissions("create_user", "Create user"));
+            permissions.add(new Permissions("update_user", "Update user"));
+            permissions.add(new Permissions("delete_user", "Delete user"));
             List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
 
             List<Role> roles = new ArrayList<>();
@@ -100,9 +102,8 @@ public class DataLoader implements CommandLineRunner {
             JsonNode jsonNode = objectMapper.readValue(region.getURL(), JsonNode.class);
             List<Region> regions = new ArrayList<>();
             List<District> districts = new ArrayList<>();
-            List<Quarter> quarters = new ArrayList<>();
             jsonNode.forEach(n -> {
-                regions.add(new Region(n.get("name_uz").textValue(), n.get("name_ru").textValue(), null, n.get("name_oz").textValue()));
+                regions.add(new Region(n.get("name_uz").textValue(), n.get("name_ru").textValue(), "", n.get("name_oz").textValue()));
             });
             List<Region> regionList = regionRepository.saveAll(regions);
             jsonNode = objectMapper.readValue(district.getURL(), JsonNode.class);
@@ -111,26 +112,34 @@ public class DataLoader implements CommandLineRunner {
                 districts.add(new District(
                         n.get("name_uz").textValue(),
                         n.get("name_ru").textValue(),
-                        null,
+                        "",
                         n.get("name_oz").textValue(),
                         regionFl
                 ));
             });
             List<District> districtList = districtRepository.saveAll(districts);
-            jsonNode = objectMapper.readValue(quarter.getURL(), JsonNode.class);
-            jsonNode.forEach(n -> {
-                List<District> districtId = districtList.stream().
-                        filter(
-                                district1 ->
-                                        district1.getId().toString()
-                                                .equals(n.get("district_id").textValue()))
-                        .collect(Collectors.toList());
-                quarters.add(new Quarter(
-                        n.get("name").textValue(),
-                        districtId.size() > 0 ? districtId.get(0) : null
-                ));
+        } else {
+            List<Permissions> permissions = new ArrayList<>();
+            List<Permissions> permissionsList = permissionsRepository.findAll();
+            permissions.add(new Permissions("get_all_user", "Get all user"));
+            permissions.add(new Permissions("get_one_user", "Get one user"));
+            permissions.add(new Permissions("create_user", "Create user"));
+            permissions.add(new Permissions("update_user", "Update user"));
+            permissions.add(new Permissions("delete_user", "Delete user"));
+            permissions.forEach(perm -> {
+                if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() ==0) {
+                    Permissions save = permissionsRepository.save(perm);
+                    permissionsList.add(save);
+                }
             });
-            quarterRepository.saveAll(quarters);
+            Optional<Role> optionalRole = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
+            if (optionalRole.isPresent() && permissionsList.size() > optionalRole.get().getPermissions().size()) {
+                Role role = optionalRole.get();
+                role.setPermissions(permissionsList);
+                roleRepository.save(role);
+            }
         }
     }
+
+
 }

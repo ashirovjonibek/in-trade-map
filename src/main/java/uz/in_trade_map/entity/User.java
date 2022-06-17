@@ -1,23 +1,51 @@
 package uz.in_trade_map.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uz.in_trade_map.entity.template.AbsEntity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity(name = "users")
-public class User extends AbsEntity implements UserDetails {
+public class User implements UserDetails {
+    @Id
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
+
+    @OrderBy
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp updatedAt;
+
+    @CreatedBy
+    private User createdBy;
+
+    @LastModifiedBy
+    private User updatedBy;
+
+    private boolean active=true;
 
     private String firstName;
 

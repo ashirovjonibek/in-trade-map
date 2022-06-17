@@ -49,6 +49,7 @@ public class CategoryRequest {
                 .descriptionRu(request.getDescriptionRu())
                 .descriptionEn(request.getDescriptionEn())
                 .descriptionUzCry(request.getDescriptionUzCry())
+                .active(true)
                 .build();
     }
 }

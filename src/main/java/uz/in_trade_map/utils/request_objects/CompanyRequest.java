@@ -82,6 +82,7 @@ public class CompanyRequest {
                 .shortDescriptionUz(request.getShortDescriptionUz())
                 .shortDescriptionUzCry(request.getShortDescriptionUzCry())
                 .inn(request.getInn())
+                .active(true)
                 .build();
     }
 }

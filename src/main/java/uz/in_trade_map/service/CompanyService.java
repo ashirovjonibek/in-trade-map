@@ -36,7 +36,10 @@ public class CompanyService {
             Optional<District> byId = districtRepository.findById(request.getDistrictId());
             if (byId.isPresent()) {
                 Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
-                ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
+                ContactData data = new ContactData();
+                data.setLocation(location);
+//                data.setSocialMedia(request.getSocialMedia());
+                ContactData contactData = contactDataRepository.save(data);
                 Company company = CompanyRequest.convertCompany(request);
                 company.setCertificates(attachmentService.uploadFile(Arrays.asList(request.getCertificates())));
                 company.setImage(attachmentService.uploadFile(request.getImage()));

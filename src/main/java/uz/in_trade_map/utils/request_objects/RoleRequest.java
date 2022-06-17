@@ -38,6 +38,7 @@ public class RoleRequest {
                 .nameEn(request.getNameEn())
                 .nameUzCry(request.getNameUzCry())
                 .roleName(request.getRoleName())
+                .active(true)
                 .build();
     }
 }

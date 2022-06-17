@@ -153,7 +153,7 @@ public class DtoConverter {
             return DtoConverter.roleDto(role);
         }));
         dto.put("permissions", permissions);
-        dto.put("address", user.getLocation() != null ? DtoConverter.locationDto(user.getLocation(), null) : null);
+        dto.put("address", user.getLocation() != null ? DtoConverter.locationDto(user.getLocation(), expand) : null);
         dto.put("companyId", user.getCompany() != null ? user.getCompany().getId() : null);
         if (expand != null) {
             if (expand.contains("company") && user.getCompany() != null) {

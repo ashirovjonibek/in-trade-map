@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import uz.in_trade_map.entity.*;
+import uz.in_trade_map.utils.validator.annotations.Email;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeArray;
 import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
@@ -23,16 +24,17 @@ public class UserRequest {
 
     private String middleName;
 
-    @NotNull
+    @NotNull(minLength = 13,maxLength = 13)
     private String phoneNumber;
 
-    @NotNull
+    @NotNull(minLength = 8,maxLength = 30)
     private String username;
 
-    @NotNull
+    @NotNull(minLength = 8,maxLength = 30)
     private String password;
 
     @NotNull
+    @Email
     private String email;
 
     @NotNull
@@ -65,6 +67,7 @@ public class UserRequest {
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .username(request.getUsername())
+                .active(true)
                 .build();
     }
 }

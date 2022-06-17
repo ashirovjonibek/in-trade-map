@@ -1,21 +1,42 @@
 package uz.in_trade_map.entity;
 
 import lombok.*;
-import uz.in_trade_map.entity.template.AbsNameEntity;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Company extends AbsNameEntity {
+public class Company {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OrderBy
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp updatedAt;
+
+    @CreatedBy
+    private User createdBy;
+
+    @LastModifiedBy
+    private User updatedBy;
+
+    private boolean active = true;
+
     private String nameUz;
 
     private String nameRu;

@@ -55,11 +55,12 @@ public class UserService extends Validator<UserRequest> {
                 if (optionalCompany.isPresent()) {
                     convertToUser.setCompany(optionalCompany.get());
                 } else return AllApiResponse.response(404, 0, "Company not fount with id!");
+
                 Optional<District> optionalDistrict = districtRepository.findById(request.getDistrictId());
                 if (optionalDistrict.isPresent()) {
                     Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
                     convertToUser.setLocation(save);
-                } else return AllApiResponse.response(404, 0, "Quarter not fount with id!");
+                } else return AllApiResponse.response(404, 0, "District not fount with id!");
                 Set<Role> roles = roleRepository.findAllByRoleNameIn(request.getRoles());
                 convertToUser.setRoles(roles);
                 convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
