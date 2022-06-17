@@ -11,7 +11,6 @@ public class CompanySpecifications {
         return (root, query, builder) -> regionId != null ? builder.equal(root
                 .get("data")
                 .get("location")
-                .get("quarter")
                 .get("district")
                 .get("region")
                 .get("id"), regionId) : query.getGroupRestriction();
@@ -21,16 +20,8 @@ public class CompanySpecifications {
         return (root, query, builder) -> districtId != null ? builder.equal(root
                 .get("data")
                 .get("location")
-                .get("quarter")
                 .get("district")
                 .get("id"), districtId) : query.getGroupRestriction();
-    }
-
-    public static Specification<Company> findByQuarterId(Integer quarterId) {
-        return (root, query, builder) -> quarterId != null ? builder.equal(root
-                .get("data")
-                .get("location")
-                .get("quarter").get("id"), quarterId) : query.getGroupRestriction();
     }
 
     public static Specification<Company> findByLocationId(Integer locationId) {

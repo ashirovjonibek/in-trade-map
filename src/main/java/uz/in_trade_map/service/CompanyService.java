@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
 import uz.in_trade_map.payload.AllApiResponse;
-import uz.in_trade_map.repository.CompanyRepository;
-import uz.in_trade_map.repository.ContactDataRepository;
-import uz.in_trade_map.repository.LocationRepository;
-import uz.in_trade_map.repository.QuarterRepository;
+import uz.in_trade_map.repository.*;
 import uz.in_trade_map.utils.dto_converter.DtoConverter;
 import uz.in_trade_map.utils.request_objects.CompanyRequest;
 
@@ -32,11 +29,11 @@ public class CompanyService {
     private final ContactDataRepository contactDataRepository;
     private final LocationRepository locationRepository;
     private final AttachmentService attachmentService;
-    private final QuarterRepository quarterRepository;
+    private final DistrictRepository districtRepository;
 
     public ResponseEntity<?> save(CompanyRequest request) {
         try {
-            Optional<Quarter> byId = quarterRepository.findById(request.getQuarterId());
+            Optional<District> byId = districtRepository.findById(request.getDistrictId());
             if (byId.isPresent()) {
                 Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
                 ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
@@ -47,7 +44,7 @@ public class CompanyService {
                 company.setData(contactData);
                 Company save = companyRepository.save(company);
                 return AllApiResponse.response(1, "Company saved successfully!", DtoConverter.companyDto(save, null));
-            } else return AllApiResponse.response(404, 0, "Quarter not fount!");
+            } else return AllApiResponse.response(404, 0, "District not fount!");
         } catch (Exception e) {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error for save company", e.getMessage());
@@ -58,7 +55,7 @@ public class CompanyService {
         try {
             Optional<Company> companyOptional = companyRepository.findByIdAndActiveTrue(id);
             if (companyOptional.isPresent()) {
-                Optional<Quarter> byId = quarterRepository.findById(request.getQuarterId());
+                Optional<District> byId = districtRepository.findById(request.getDistrictId());
                 if (byId.isPresent()) {
                     Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
                     ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
@@ -99,7 +96,7 @@ public class CompanyService {
                     company.setData(contactData);
                     Company save = companyRepository.save(company);
                     return AllApiResponse.response(1, "Company updated successfully!", DtoConverter.companyDto(save, null));
-                } else return AllApiResponse.response(404, 0, "Quarter not found!");
+                } else return AllApiResponse.response(404, 0, "District not found!");
             } else return AllApiResponse.response(404, 0, "Company not found with id!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +131,6 @@ public class CompanyService {
                             .and(findByInn(inn))
                             .and(findByRegionId(regionId))
                             .and(findByDistrictId(districtId))
-                            .and(findByQuarterId(quarterId))
                             .and(activeTrue()),
                     pageable
 

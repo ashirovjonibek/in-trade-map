@@ -19,8 +19,8 @@ public class LocationRequest {
 
     private Float lng;
 
-    @NotNull(message = "QuarterId is not be empty!")
-    private Integer quarterId;
+    @NotNull(message = "districtId is not be empty!")
+    private Integer districtId;
 
     public static Location request(LocationRequest request) {
         return Location.builder()

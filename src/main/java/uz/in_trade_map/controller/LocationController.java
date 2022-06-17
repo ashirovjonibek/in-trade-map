@@ -19,12 +19,11 @@ public class LocationController {
     public HttpEntity<?> getAll(
             @RequestParam(required = false) Integer regionId,
             @RequestParam(required = false) Integer districtId,
-            @RequestParam(required = false) Integer quarterId,
             @RequestParam(required = false) String address,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "20") int size,
             @RequestParam(required = false) String expand) {
-        return locationService.findAllBySpec(regionId, districtId, quarterId, address, size, page - 1, expand);
+        return locationService.findAllBySpec(regionId, districtId, address, size, page - 1, expand);
     }
 
     @PreAuthorize("hasAnyAuthority('create_location')")

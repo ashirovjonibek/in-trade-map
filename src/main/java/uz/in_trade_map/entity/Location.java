@@ -18,7 +18,7 @@ public class Location {
     private Integer id;
 
     @ManyToOne
-    private Quarter quarter;
+    private District district;
 
     private String address;
 
@@ -26,8 +26,8 @@ public class Location {
 
     private Float lng;
 
-    public Location(Quarter quarter, String address, Float lat, Float lng) {
-        this.quarter = quarter;
+    public Location(District district, String address, Float lat, Float lng) {
+        this.district = district;
         this.address = address;
         this.lat = lat;
         this.lng = lng;

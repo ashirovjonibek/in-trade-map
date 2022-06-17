@@ -10,10 +10,12 @@ import static org.springframework.data.jpa.domain.Specification.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.in_trade_map.dtos.Meta;
+import uz.in_trade_map.entity.District;
 import uz.in_trade_map.entity.Location;
 import uz.in_trade_map.entity.Quarter;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.payload.ApiResponse;
+import uz.in_trade_map.repository.DistrictRepository;
 import uz.in_trade_map.utils.request_objects.LocationRequest;
 import uz.in_trade_map.repository.LocationRepository;
 import uz.in_trade_map.repository.QuarterRepository;
@@ -33,14 +35,14 @@ public class LocationService extends Validator<LocationRequest> {
     LocationRepository locationRepository;
 
     @Autowired
-    QuarterRepository quarterRepository;
+    DistrictRepository districtRepository;
 
     public ResponseEntity<?> saveOrEdit(LocationRequest request) {
         Map<String, Object> valid = valid(request);
         if (valid.size() == 0) {
 
-            Optional<Quarter> quarterOptional = quarterRepository.findById(request.getQuarterId());
-            if (quarterOptional.isPresent()) {
+            Optional<District> districtOptional = districtRepository.findById(request.getDistrictId());
+            if (districtOptional.isPresent()) {
                 try {
                     Location location = null;
                     if (request.getId() != null) {
@@ -53,7 +55,7 @@ public class LocationService extends Validator<LocationRequest> {
                             if (request.getLng() != null) {
                                 location1.setLng(request.getLng());
                             }
-                            location1.setQuarter(quarterOptional.get());
+                            location1.setDistrict(districtOptional.get());
                             location1.setAddress(request.getAddress());
                             location = location1;
                         } else {
@@ -61,7 +63,7 @@ public class LocationService extends Validator<LocationRequest> {
                         }
                     } else {
                         location = LocationRequest.request(request);
-                        location.setQuarter(quarterOptional.get());
+                        location.setDistrict(districtOptional.get());
                     }
                     Location save = locationRepository.save(location);
                     return ResponseEntity.ok(new ApiResponse(1, "Saved successfully", save));
@@ -102,12 +104,11 @@ public class LocationService extends Validator<LocationRequest> {
         }
     }
 
-    public ResponseEntity<?> findAllBySpec(Integer regionId, Integer districtId, Integer quarterId, String address, int size, int page, String expand) {
+    public ResponseEntity<?> findAllBySpec(Integer regionId, Integer districtId, String address, int size, int page, String expand) {
         Pageable pageable = PageRequest.of(page, size == 0 ? (int) locationRepository.count() : size);
         Page<Location> locations = locationRepository.findAll(
                 where(findByRegionId(regionId))
                         .and(findByDistrictId(districtId))
-                        .and(findByQuarterId(quarterId))
                         .and(findByAddress(address)),
                 pageable
         );

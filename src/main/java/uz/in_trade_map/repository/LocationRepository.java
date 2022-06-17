@@ -7,5 +7,4 @@ import uz.in_trade_map.entity.Location;
 import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Integer>, JpaSpecificationExecutor<Location> {
-    List<Location> findAllByQuarterId(Integer id);
 }

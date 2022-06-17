@@ -23,17 +23,17 @@ public class AddressController {
     QuarterRepository quarterRepository;
 
     @GetMapping("/regions")
-    public HttpEntity<?> regions(){
-        return ResponseEntity.ok(new ApiResponse(1,"success",regionRepository.findAll()));
+    public HttpEntity<?> regions() {
+        return ResponseEntity.ok(new ApiResponse(1, "success", regionRepository.findAll()));
     }
 
     @GetMapping("/districts/{id}")
-    public HttpEntity<?> districts(@PathVariable Integer id){
-        return ResponseEntity.ok(new ApiResponse(1,"success",districtRepository.findAllByRegionId(id)));
+    public HttpEntity<?> districts(@PathVariable Integer id) {
+        return ResponseEntity.ok(new ApiResponse(1, "success", districtRepository.findAllByRegionId(id)));
     }
 
-    @GetMapping("/quarters/{id}")
-    public HttpEntity<?> quarters(@PathVariable Integer id){
-        return ResponseEntity.ok(new ApiResponse(1,"success",quarterRepository.findAllByDistrictId(id)));
-    }
+//    @GetMapping("/quarters/{id}")
+//    public HttpEntity<?> quarters(@PathVariable Integer id){
+//        return ResponseEntity.ok(new ApiResponse(1,"success",quarterRepository.findAllByDistrictId(id)));
+//    }
 }

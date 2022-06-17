@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import uz.in_trade_map.entity.Permissions;
 import uz.in_trade_map.entity.Role;
 import uz.in_trade_map.entity.User;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -38,6 +39,8 @@ public class UserDto {
 
     private List<String> permissions;
 
+    private Map<String, Object> company;
+
     public static UserDto response(User user) {
         UserDto userDto = new UserDto();
         Set<String> perm = new HashSet<>();
@@ -62,6 +65,9 @@ public class UserDto {
         if (user.getUpdatedAt() != null) userDto.setUpdatedAt(user.getUpdatedAt());
         if (user.getUpdatedBy() != null) userDto.setUpdatedById(user.getUpdatedBy().getId());
         userDto.setUsername(user.getUsername());
+        if (user.getCompany() != null) {
+            userDto.setCompany(DtoConverter.companyDto(user.getCompany(),null));
+        }
         return userDto;
     }
 }

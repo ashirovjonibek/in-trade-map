@@ -37,7 +37,7 @@ public class RoleService extends Validator<RoleRequest> {
             boolean b = roleRepository.existsByRoleNameAndActiveTrue(request.getRoleName());
             if (b) {
                 List<String> errors = new ArrayList<>();
-                errors.add("This roleName already exists");
+                errors.add("This roleName already exists!");
                 valid.put("roleName", errors);
             }
             if (valid.size() > 0) {

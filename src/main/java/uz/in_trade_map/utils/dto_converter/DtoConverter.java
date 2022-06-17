@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.*;
 import uz.in_trade_map.utils.AuthUser;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DtoConverter {
@@ -31,8 +29,8 @@ public class DtoConverter {
         loc.put("address", location.getAddress());
         loc.put("lat", location.getLat());
         loc.put("lng", location.getLng());
-        if (expand != null && expand.contains("quarter")) {
-            loc.put("quarter", location.getQuarter());
+        if (expand != null && expand.contains("district")) {
+            loc.put("district", location.getDistrict());
         }
         return loc;
     }
@@ -96,7 +94,7 @@ public class DtoConverter {
         if (expand != null) {
             if (expand.contains("contactData")) {
                 String s = null;
-                if (expand.contains("contactData.location.quarter")) s = "quarter";
+                if (expand.contains("contactData.location.district")) s = "district";
                 Map<String, Object> contactData = new HashMap<>();
                 contactData.put("socialMedia", company.getData().getSocialMedia());
                 contactData.put("location", DtoConverter.locationDto(company.getData().getLocation(), s));
@@ -137,6 +135,32 @@ public class DtoConverter {
             }
         }
         return response;
+    }
+
+    public static Map<String, Object> userDto(User user, String expand) {
+        Map<String, Object> dto = new HashMap<>();
+        Set<String> permissions = new HashSet<>();
+        dto.put("id", user.getId());
+        dto.put("firstName", user.getFirstName());
+        dto.put("lastName", user.getLastName());
+        dto.put("middleName", user.getMiddleName());
+        dto.put("username", user.getUsername());
+        dto.put("email", user.getEmail());
+        dto.put("phoneNumber", user.getPhoneNumber());
+        dto.put("image", user.getImage() != null ? user.getImage().getId() : null);
+        dto.put("roles", user.getRoles().stream().map(role -> {
+            permissions.addAll(role.getPermissions().stream().map(Permissions::getName).collect(Collectors.toSet()));
+            return DtoConverter.roleDto(role);
+        }));
+        dto.put("permissions", permissions);
+        dto.put("address", user.getLocation() != null ? DtoConverter.locationDto(user.getLocation(), null) : null);
+        dto.put("companyId", user.getCompany() != null ? user.getCompany().getId() : null);
+        if (expand != null) {
+            if (expand.contains("company") && user.getCompany() != null) {
+                dto.put("company", DtoConverter.companyDto(user.getCompany(), expand));
+            }
+        }
+        return dto;
     }
 
     public static Map<String, Object> createdUpdatedDto(User user) {

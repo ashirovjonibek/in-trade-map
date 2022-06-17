@@ -57,7 +57,7 @@ public class CompanyRequest {
     private String socialMedia;
 
     @NotNull
-    private Integer quarterId;
+    private Integer districtId;
 
     @NotNull
     private String address;
