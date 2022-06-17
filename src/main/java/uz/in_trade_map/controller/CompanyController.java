@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
+@CrossOrigin
 public class CompanyController extends Validator<CompanyRequest> {
     private final CompanyService companyService;
 

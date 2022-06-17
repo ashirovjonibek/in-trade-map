@@ -10,6 +10,7 @@ import uz.in_trade_map.service.LocationService;
 
 @RestController
 @RequestMapping("/api/location")
+@CrossOrigin
 public class LocationController {
     @Autowired
     LocationService locationService;

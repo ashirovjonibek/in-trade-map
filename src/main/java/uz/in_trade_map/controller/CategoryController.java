@@ -12,6 +12,7 @@ import uz.in_trade_map.utils.request_objects.CategoryRequest;
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
+@CrossOrigin
 public class CategoryController {
     private final CategoryService categoryService;
 

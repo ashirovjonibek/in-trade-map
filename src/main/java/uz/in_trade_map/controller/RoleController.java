@@ -11,6 +11,7 @@ import uz.in_trade_map.utils.request_objects.RoleRequest;
 @RestController
 @RequestMapping("/api/role")
 @RequiredArgsConstructor
+@CrossOrigin
 public class RoleController {
     private final RoleService roleService;
 
