@@ -3,8 +3,11 @@ package uz.in_trade_map.utils.request_objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import uz.in_trade_map.entity.Category;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
+
+import javax.persistence.EntityListeners;
 
 @Data
 @AllArgsConstructor

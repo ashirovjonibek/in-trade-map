@@ -10,8 +10,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -19,7 +21,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class AttachmentContent {
+@EntityListeners(AuditingEntityListener.class)
+public class AttachmentContent  implements Serializable {
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     @GeneratedValue(generator = "uuid2")

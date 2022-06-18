@@ -148,16 +148,21 @@ public class DtoConverter {
         dto.put("email", user.getEmail());
         dto.put("phoneNumber", user.getPhoneNumber());
         dto.put("image", user.getImage() != null ? user.getImage().getId() : null);
-        dto.put("roles", user.getRoles().stream().map(role -> {
-            permissions.addAll(role.getPermissions().stream().map(Permissions::getName).collect(Collectors.toSet()));
-            return DtoConverter.roleDto(role);
-        }));
+        dto.put("roles", user.getRoles().stream().map(DtoConverter::roleDto));
+        user.getRoles()
+                .forEach(role -> permissions.addAll(role.getPermissions().stream().map(Permissions::getName).collect(Collectors.toList())));
         dto.put("permissions", permissions);
-        dto.put("address", user.getLocation() != null ? DtoConverter.locationDto(user.getLocation(), expand) : null);
+//        dto.put("address", user.getLocation() != null ? DtoConverter.locationDto(user.getLocation(), expand) : null);
         dto.put("companyId", user.getCompany() != null ? user.getCompany().getId() : null);
         if (expand != null) {
             if (expand.contains("company") && user.getCompany() != null) {
                 dto.put("company", DtoConverter.companyDto(user.getCompany(), expand));
+            }
+            if (expand.contains("createdBy") && user.getCreatedBy() != null) {
+                dto.put("createdBy", DtoConverter.createdUpdatedDto(user.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && user.getUpdatedBy() != null) {
+                dto.put("updatedBy", DtoConverter.createdUpdatedDto(user.getUpdatedBy()));
             }
         }
         return dto;
@@ -166,6 +171,7 @@ public class DtoConverter {
     public static Map<String, Object> createdUpdatedDto(User user) {
         if (user != null) {
             Map<String, Object> resp = new HashMap<>();
+            resp.put("id", user.getId() != null ? user.getId() : "");
             resp.put("firstName", user.getFirstName() != null ? user.getFirstName() : "");
             resp.put("lastName", user.getLastName() != null ? user.getLastName() : "");
             resp.put("username", user.getUsername() != null ? user.getUsername() : "");

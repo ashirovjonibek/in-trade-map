@@ -30,29 +30,28 @@ public class UserRequest {
     @NotNull(minLength = 8,maxLength = 30)
     private String username;
 
-    @NotNull(minLength = 8,maxLength = 30)
+//    @NotNull(minLength = 8,maxLength = 30)
     private String password;
 
     @NotNull
     @Email
     private String email;
 
-    @NotNull
-    private Integer districtId;
-
-    @NotNull
-    private String address;
-
-    @NotNull
-    private Float lat;
-
-    @NotNull
-    private Float lng;
+//    @NotNull
+//    private Integer districtId;
+//
+//    @NotNull
+//    private String address;
+//
+//    @NotNull
+//    private Float lat;
+//
+//    @NotNull
+//    private Float lng;
 
     @FieldTypeFile(extension = ".jpg,.jpeg,.png", size = 2 * 1024 * 1024)
     private MultipartFile image;
 
-    @NotNull
     private Integer companyId;
 
     @NotNull

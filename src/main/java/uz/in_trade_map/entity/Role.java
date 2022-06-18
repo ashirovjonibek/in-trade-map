@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import uz.in_trade_map.entity.enums.RoleName;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Role {
+public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

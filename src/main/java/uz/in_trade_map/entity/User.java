@@ -7,11 +7,13 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +25,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity(name = "users")
-public class User implements UserDetails {
+@EntityListeners(AuditingEntityListener.class)
+public class User implements UserDetails, Serializable {
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     @GeneratedValue(generator = "uuid2")
@@ -45,7 +48,7 @@ public class User implements UserDetails {
     @LastModifiedBy
     private User updatedBy;
 
-    private boolean active=true;
+    private boolean active = true;
 
     private String firstName;
 

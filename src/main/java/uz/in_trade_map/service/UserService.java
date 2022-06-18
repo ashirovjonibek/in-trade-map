@@ -1,16 +1,26 @@
 package uz.in_trade_map.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
+import uz.in_trade_map.utils.AuthUser;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
 import uz.in_trade_map.utils.request_objects.UserRequest;
 import uz.in_trade_map.utils.validator.Validator;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static uz.in_trade_map.service.specifications.UserSpecifications.*;
+import static org.springframework.data.jpa.domain.Specification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +32,8 @@ public class UserService extends Validator<UserRequest> {
     private final DistrictRepository districtRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordActions passwordActions;
+    private final UserPasswordsRepository userPasswordsRepository;
 
     public ResponseEntity<?> createUser(UserRequest request) {
         try {
@@ -29,24 +41,35 @@ public class UserService extends Validator<UserRequest> {
             boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(request.getPhoneNumber());
             boolean existsByUsername = userRepository.existsByUsername(request.getUsername());
             Map<String, Object> valid = valid(request);
-            if (existsByEmail) {
+            if (existsByEmail && request.getEmail() != null) {
                 List<String> err = new ArrayList<>();
                 err.add("This email already exists!");
                 valid.put("email", err);
             }
-            if (existsByPhoneNumber) {
+            if (existsByPhoneNumber && request.getPhoneNumber() != null) {
                 List<String> err = new ArrayList<>();
                 err.add("This phone already exists!");
                 valid.put("phone", err);
             }
-            if (existsByUsername) {
+            if (existsByUsername && request.getUsername() != null) {
                 List<String> err = new ArrayList<>();
                 err.add("This username already exists!");
                 valid.put("username", err);
             }
+            if (request.getPassword() != null && request.getPassword().length() < 8) {
+                List<String> err = new ArrayList<>();
+                err.add("The password value must be at least 8 characters");
+                valid.put("password", err);
+            }
+            if (request.getPassword() != null && request.getPassword().length() > 30) {
+                List<String> err = new ArrayList<>();
+                err.add("The password value must be at more 30 characters");
+                valid.put("password", err);
+            }
             if (valid.size() > 0) {
                 return AllApiResponse.response(422, 0, "Validator errors!", valid);
             } else {
+                UserPasswords userPasswords = new UserPasswords();
                 User convertToUser = UserRequest.convertToUser(request);
                 if (request.getImage() != null) {
                     convertToUser.setImage(attachmentService.uploadFile(request.getImage()));
@@ -56,20 +79,164 @@ public class UserService extends Validator<UserRequest> {
                     convertToUser.setCompany(optionalCompany.get());
                 } else return AllApiResponse.response(404, 0, "Company not fount with id!");
 
-                Optional<District> optionalDistrict = districtRepository.findById(request.getDistrictId());
-                if (optionalDistrict.isPresent()) {
-                    Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
-                    convertToUser.setLocation(save);
-                } else return AllApiResponse.response(404, 0, "District not fount with id!");
+//                Optional<District> optionalDistrict = districtRepository.findById(request.getDistrictId());
+//                if (optionalDistrict.isPresent()) {
+//                    Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
+//                    convertToUser.setLocation(save);
+//                } else return AllApiResponse.response(404, 0, "District not fount with id!");
                 Set<Role> roles = roleRepository.findAllByRoleNameIn(request.getRoles());
                 convertToUser.setRoles(roles);
-                convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                if (request.getPassword() != null) {
+                    convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                    userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
+                } else {
+                    String password = passwordActions.generatePassword();
+                    System.out.println(password);
+                    convertToUser.setPassword(passwordEncoder.encode(password));
+                    userPasswords.setPassword(passwordActions.encodePassword(password));
+                }
                 User user = userRepository.save(convertToUser);
-                return AllApiResponse.response(1, "Success", user);
+                userPasswords.setUser(user);
+                userPasswordsRepository.save(userPasswords);
+                System.out.println(userPasswords.getPassword());
+                System.out.println(passwordActions.decodePassword(userPasswords.getPassword()));
+                return AllApiResponse.response(1, "Success", DtoConverter.userDto(user, null));
             }
         } catch (Exception e) {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error create user");
+        }
+    }
+
+    public ResponseEntity<?> updateUser(UUID id, UserRequest request) {
+        try {
+            Optional<User> optionalUser = userRepository.findByIdAndActiveTrue(id);
+            if (optionalUser.isPresent()) {
+                boolean existsByEmail = userRepository.existsByEmail(request.getEmail());
+                boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(request.getPhoneNumber());
+                boolean existsByUsername = userRepository.existsByUsername(request.getUsername());
+                Map<String, Object> valid = valid(request);
+                if (existsByEmail
+                        && request.getEmail() != null
+                        && !optionalUser.get().getEmail().equals(request.getEmail())
+                ) {
+                    List<String> err = new ArrayList<>();
+                    err.add("This email already exists!");
+                    valid.put("email", err);
+                }
+                if (existsByPhoneNumber
+                        && request.getPhoneNumber() != null
+                        && !optionalUser.get().getPhoneNumber().equals(request.getPhoneNumber())
+                ) {
+                    List<String> err = new ArrayList<>();
+                    err.add("This phone already exists!");
+                    valid.put("phone", err);
+                }
+                if (existsByUsername
+                        && request.getUsername() != null
+                        && !optionalUser.get().getUsername().equals(request.getUsername())
+                ) {
+                    List<String> err = new ArrayList<>();
+                    err.add("This username already exists!");
+                    valid.put("username", err);
+                }
+                if (request.getPassword() != null && request.getPassword().length() < 8) {
+                    List<String> err = new ArrayList<>();
+                    err.add("The password value must be at least 8 characters");
+                    valid.put("password", err);
+                }
+                if (request.getPassword() != null && request.getPassword().length() > 30) {
+                    List<String> err = new ArrayList<>();
+                    err.add("The password value must be at more 30 characters");
+                    valid.put("password", err);
+                }
+                if (valid.size() > 0) {
+                    return AllApiResponse.response(422, 0, "Validator errors!", valid);
+                } else {
+                    UserPasswords userPasswords = new UserPasswords();
+                    User convertToUser = UserRequest.convertToUser(request);
+                    if (request.getImage() != null) {
+                        convertToUser.setImage(attachmentService.uploadFile(request.getImage()));
+                    } else {
+                        convertToUser.setImage(optionalUser.get().getImage());
+                    }
+                    Optional<Company> optionalCompany = companyRepository.findByIdAndActiveTrue(request.getCompanyId());
+                    if (optionalCompany.isPresent()) {
+                        convertToUser.setCompany(optionalCompany.get());
+                    } else return AllApiResponse.response(404, 0, "Company not fount with id!");
+
+//                    Optional<District> optionalDistrict = districtRepository.findById(request.getDistrictId());
+//                    if (optionalDistrict.isPresent()) {
+//                        Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
+//                        convertToUser.setLocation(save);
+//                    } else return AllApiResponse.response(404, 0, "District not fount with id!");
+                    Set<Role> roles = roleRepository.findAllByRoleNameIn(request.getRoles());
+                    convertToUser.setRoles(roles);
+                    if (request.getPassword() != null) {
+                        convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                        userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
+                    } else {
+                        String password = passwordActions.generatePassword();
+                        convertToUser.setPassword(passwordEncoder.encode(password));
+                        userPasswords.setPassword(passwordActions.encodePassword(password));
+                    }
+                    User user = userRepository.save(convertToUser);
+                    userPasswords.setUser(user);
+                    userPasswordsRepository.save(userPasswords);
+                    return AllApiResponse.response(1, "Success", DtoConverter.userDto(user, null));
+                }
+            } else {
+                return AllApiResponse.response(404, 0, "User not fount with id!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error create user");
+        }
+    }
+
+    public ResponseEntity<?> getAll(
+            Integer companyId,
+            String firstName,
+            String lastName,
+            String middleName,
+            Set<String> roleNames,
+            Integer districtId,
+            Integer regionId,
+            String email,
+            String phoneNumber,
+            String username,
+            int page,
+            int size,
+            String expand
+    ) {
+        try {
+            Set<Role> roleNameIn = null;
+            if (roleNames != null && !roleNames.isEmpty()) {
+                roleNameIn = roleRepository.findAllByRoleNameIn(roleNames);
+            }
+            User user = (User) AuthUser.getCurrentUser().getPrincipal();
+            Specification<User> where = where(findByCompanyId(companyId)
+                    .and(findByDistrictId(districtId))
+                    .and(findByEmail(email))
+                    .and(findByFirstName(firstName))
+                    .and(findByLastName(lastName))
+                    .and(findByMiddleName(middleName))
+                    .and(findByPhoneNumber(phoneNumber))
+                    .and(findByRegionId(regionId))
+                    .and(findByUsername(username))
+                    .and(findByRoles(roleNameIn))
+                    .and(findByUsernameNot(user.getUsername()))
+            );
+            Page<User> all = userRepository.findAll(where,
+                    PageRequest.of(page, size)
+            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("meta", new Meta(all.getTotalElements(), all.getTotalPages(), page + 1, size));
+            response.put("items", all.stream().map(user1 -> DtoConverter.userDto(user1, expand)).collect(Collectors.toList()));
+            return AllApiResponse.response(1, "Success", response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get all users!", e.getMessage());
         }
     }
 }
