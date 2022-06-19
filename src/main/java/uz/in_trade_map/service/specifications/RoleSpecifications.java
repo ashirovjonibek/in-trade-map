@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.Company;
 import uz.in_trade_map.entity.Role;
+import uz.in_trade_map.entity.enums.RoleName;
 
 @Component
 public class RoleSpecifications {
@@ -25,6 +26,11 @@ public class RoleSpecifications {
     public static Specification<Role> findByNameUzCry(String nameUzCry) {
         return (root, query, builder) -> nameUzCry != null ? builder.like(root
                 .get("nameUzCry"), "%" + nameUzCry + "%") : query.getGroupRestriction();
+    }
+
+    public static Specification<Role> findByNotRoleAdmin() {
+        return (root, query, builder) -> builder.notEqual(root
+                .get("roleName"), RoleName.ROLE_ADMIN.name());
     }
 
     public static Specification<Role> activeTrue() {

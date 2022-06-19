@@ -89,12 +89,12 @@ public class RoleService extends Validator<RoleRequest> {
                             .or(findByNameEn(search))
                             .or(findByNameRu(search))
                             .or(findByNameUzCry(search))
+                            .and(findByNotRoleAdmin())
                             .and(activeTrue()),
                     PageRequest.of(page - 1, size)
             );
             Map<String, Object> resp = new HashMap<>();
-            List<Role> roleList = roles.stream().filter(role -> !role.getRoleName().equals(RoleName.ROLE_ADMIN.name())).collect(Collectors.toList());
-            resp.put("items", roleList.stream().map(role -> DtoConverter.roleDto(role, expand)).collect(Collectors.toList()));
+            resp.put("items", roles.stream().map(role -> DtoConverter.roleDto(role, expand)).collect(Collectors.toList()));
             resp.put("meta", new Meta(roles.getTotalElements(), roles.getTotalPages(), page, size));
             return AllApiResponse.response(1, "Success", resp);
         } catch (Exception e) {
