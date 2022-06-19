@@ -1,0 +1,52 @@
+package uz.in_trade_map.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import uz.in_trade_map.entity.Category;
+import uz.in_trade_map.entity.Company;
+import uz.in_trade_map.entity.Product;
+import uz.in_trade_map.payload.AllApiResponse;
+import uz.in_trade_map.repository.CategoryRepository;
+import uz.in_trade_map.repository.CompanyRepository;
+import uz.in_trade_map.repository.ProductRepository;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
+import uz.in_trade_map.utils.request_objects.ProductRequest;
+import uz.in_trade_map.utils.validator.Validator;
+
+import java.util.Map;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class ProductService extends Validator<ProductRequest> {
+    private final ProductRepository productRepository;
+    private final CompanyRepository companyRepository;
+    private final CategoryRepository categoryRepository;
+    private final AttachmentService attachmentService;
+
+    public ResponseEntity<?> create(ProductRequest request) {
+        try {
+            Map<String, Object> valid = valid(request);
+            if (valid.size() > 0) {
+                return AllApiResponse.response(422, 0, "Validator errors!", valid);
+            } else {
+                Product product = ProductRequest.convertToProduct(request);
+                product.setPhotos(attachmentService.uploadFile(request.getPhotos()));
+                Optional<Company> optionalCompany = companyRepository.findByIdAndActiveTrue(request.getCompanyId());
+                if (optionalCompany.isPresent()) {
+                    product.setCompany(optionalCompany.get());
+                } else return AllApiResponse.response(404, 0, "Company not fount with id!");
+                Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(request.getCategoryId());
+                if (optionalCategory.isPresent()) {
+                    product.setCategory(optionalCategory.get());
+                } else return AllApiResponse.response(404, 0, "Category not fount with id!");
+                Product save = productRepository.save(product);
+                return AllApiResponse.response(1, "Product created successfully!", DtoConverter.productDto(save, null));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error create product!", e.getMessage());
+        }
+    }
+}

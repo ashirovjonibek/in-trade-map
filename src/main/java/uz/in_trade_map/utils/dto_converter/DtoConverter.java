@@ -110,6 +110,53 @@ public class DtoConverter {
         return response;
     }
 
+    public static Map<String, Object> productDto(Product product, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", product.getId());
+        response.put("nameUz", product.getNameUz());
+        response.put("nameRu", product.getNameRu());
+        response.put("nameEn", product.getNameEn());
+        response.put("nameUzCry", product.getNameUzCry());
+        response.put("shortDescriptionUz", product.getShortDescriptionUz());
+        response.put("shortDescriptionRu", product.getShortDescriptionRu());
+        response.put("shortDescriptionEn", product.getShortDescriptionEn());
+        response.put("shortDescriptionUzCry", product.getShortDescriptionUzCry());
+        response.put("descriptionUz", product.getDescriptionUz());
+        response.put("descriptionRu", product.getDescriptionRu());
+        response.put("descriptionEn", product.getDescriptionEn());
+        response.put("descriptionUzCry", product.getDescriptionUzCry());
+        response.put("priceUZS", product.getPriceUZS());
+        response.put("priceUSD", product.getPriceUSD());
+        response.put("exportPriceUZS", product.getExportPriceUZS());
+        response.put("exportPriceUSD", product.getExportPriceUSD());
+        response.put("minWeight", product.getMinWeight());
+        response.put("weight", product.getWeight());
+        response.put("materialType", product.getMaterialType());
+        response.put("view", product.getViews());
+        response.put("categoryId", product.getCategory() != null ? product.getCategory().getId() : null);
+        response.put("companyId", product.getCompany() != null ? product.getCompany().getId() : null);
+        response.put("createdById", product.getCreatedBy() != null ? product.getCreatedBy().getId() : null);
+        response.put("updatedById", product.getUpdatedBy() != null ? product.getUpdatedBy().getId() : null);
+        response.put("photos", product.getPhotos() != null
+                ? product.getPhotos().stream().map(Attachment::getId).collect(Collectors.toList())
+                : null);
+        if (expand != null) {
+            if (expand.contains("createdBy") && product.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(product.getCreatedBy()));
+            }
+            if (expand.contains("company") && product.getCompany() != null) {
+                response.put("company", DtoConverter.companyDto(product.getCompany(), expand));
+            }
+            if (expand.contains("category") && product.getCategory() != null) {
+                response.put("category", DtoConverter.categoryDto(product.getCategory(), expand));
+            }
+            if (expand.contains("updatedBy") && product.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(product.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
+
     public static Map<String, Object> roleDto(Role role, String expand) {
         Map<String, Object> response = new HashMap<>();
         response.put("id", role.getId());
