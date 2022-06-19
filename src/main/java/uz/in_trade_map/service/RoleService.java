@@ -44,7 +44,7 @@ public class RoleService extends Validator<RoleRequest> {
                 return AllApiResponse.response(422, 0, "Validator errors", valid);
             } else {
                 Role role = RoleRequest.convertToRole(request);
-                List<Permissions> allById = permissionsRepository.findAllById(request.getPermissions());
+                List<Permissions> allById = permissionsRepository.findAllByNameIn(new HashSet<>(request.getPermissions()));
                 role.setPermissions(allById);
                 Role save = roleRepository.save(role);
                 return AllApiResponse.response(1, "Success", DtoConverter.roleDto(save));
@@ -68,7 +68,7 @@ public class RoleService extends Validator<RoleRequest> {
                         return AllApiResponse.response(422, 0, "Validator errors", valid);
                     } else {
                         Role role = RoleRequest.convertToRole(request);
-                        List<Permissions> allById = permissionsRepository.findAllById(request.getPermissions());
+                        List<Permissions> allById = permissionsRepository.findAllByNameIn(new HashSet<>(request.getPermissions()));
                         role.setPermissions(allById);
                         role.setId(optionalRole.get().getId());
                         Role save = roleRepository.save(role);

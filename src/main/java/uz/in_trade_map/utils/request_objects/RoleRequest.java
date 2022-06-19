@@ -26,7 +26,7 @@ public class RoleRequest {
     private String nameEn;
 
     @FieldTypeArray(minLength = 1)
-    private List<Integer> permissions;
+    private List<String> permissions;
 
     @NotNull
     private String roleName;
