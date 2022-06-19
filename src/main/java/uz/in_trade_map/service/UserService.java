@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
+import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
 import uz.in_trade_map.utils.AuthUser;
@@ -27,13 +29,14 @@ import static org.springframework.data.jpa.domain.Specification.*;
 public class UserService extends Validator<UserRequest> {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
-    private final LocationRepository locationRepository;
+    //    private final LocationRepository locationRepository;
     private final AttachmentService attachmentService;
-    private final DistrictRepository districtRepository;
+    //    private final DistrictRepository districtRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final PasswordActions passwordActions;
     private final UserPasswordsRepository userPasswordsRepository;
+    private final PermissionsRepository permissionsRepository;
 
     public ResponseEntity<?> createUser(UserRequest request) {
         try {
@@ -90,7 +93,7 @@ public class UserService extends Validator<UserRequest> {
                     convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
                     userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
                 } else {
-                    String password = passwordActions.generatePassword();
+                    String password = passwordActions.generatePassword(8);
                     System.out.println(password);
                     convertToUser.setPassword(passwordEncoder.encode(password));
                     userPasswords.setPassword(passwordActions.encodePassword(password));
@@ -100,7 +103,7 @@ public class UserService extends Validator<UserRequest> {
                 userPasswordsRepository.save(userPasswords);
                 System.out.println(userPasswords.getPassword());
                 System.out.println(passwordActions.decodePassword(userPasswords.getPassword()));
-                return AllApiResponse.response(1, "Success", DtoConverter.userDto(user, null));
+                return AllApiResponse.response(1, "Successfully created user!", DtoConverter.userDto(user, null));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,7 +114,9 @@ public class UserService extends Validator<UserRequest> {
     public ResponseEntity<?> updateUser(UUID id, UserRequest request) {
         try {
             Optional<User> optionalUser = userRepository.findByIdAndActiveTrue(id);
-            if (optionalUser.isPresent()) {
+
+            if (optionalUser.isPresent() && optionalUser.get().getRoles().stream().filter(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN)).count() == 0) {
+                Optional<UserPasswords> op = userPasswordsRepository.findByUserId(id);
                 boolean existsByEmail = userRepository.existsByEmail(request.getEmail());
                 boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(request.getPhoneNumber());
                 boolean existsByUsername = userRepository.existsByUsername(request.getUsername());
@@ -154,6 +159,7 @@ public class UserService extends Validator<UserRequest> {
                     return AllApiResponse.response(422, 0, "Validator errors!", valid);
                 } else {
                     UserPasswords userPasswords = new UserPasswords();
+                    op.ifPresent(passwords -> userPasswords.setId(passwords.getId()));
                     User convertToUser = UserRequest.convertToUser(request);
                     if (request.getImage() != null) {
                         convertToUser.setImage(attachmentService.uploadFile(request.getImage()));
@@ -176,21 +182,27 @@ public class UserService extends Validator<UserRequest> {
                         convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
                         userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
                     } else {
-                        String password = passwordActions.generatePassword();
-                        convertToUser.setPassword(passwordEncoder.encode(password));
-                        userPasswords.setPassword(passwordActions.encodePassword(password));
+                        if (op.isPresent()) {
+                            convertToUser.setPassword(passwordEncoder.encode(passwordActions.decodePassword(op.get().getPassword())));
+                            userPasswords.setPassword(op.get().getPassword());
+                        } else {
+                            String s = passwordActions.generatePassword(8);
+                            convertToUser.setPassword(passwordEncoder.encode(s));
+                            userPasswords.setPassword(passwordActions.encodePassword(s));
+                        }
                     }
+                    convertToUser.setId(id);
                     User user = userRepository.save(convertToUser);
                     userPasswords.setUser(user);
                     userPasswordsRepository.save(userPasswords);
-                    return AllApiResponse.response(1, "Success", DtoConverter.userDto(user, null));
+                    return AllApiResponse.response(1, "Successfully updated user", DtoConverter.userDto(user, null));
                 }
             } else {
                 return AllApiResponse.response(404, 0, "User not fount with id!");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return AllApiResponse.response(500, 0, "Error create user");
+            return AllApiResponse.response(500, 0, "Error update user");
         }
     }
 
@@ -211,6 +223,9 @@ public class UserService extends Validator<UserRequest> {
     ) {
         try {
             Set<Role> roleNameIn = null;
+            Set<String> admin=new HashSet<>();
+            admin.add(RoleName.ROLE_ADMIN.name());
+            Set<Role> roleAdmin = roleRepository.findAllByRoleNameIn(admin);
             if (roleNames != null && !roleNames.isEmpty()) {
                 roleNameIn = roleRepository.findAllByRoleNameIn(roleNames);
             }
@@ -224,8 +239,10 @@ public class UserService extends Validator<UserRequest> {
                     .and(findByPhoneNumber(phoneNumber))
                     .and(findByRegionId(regionId))
                     .and(findByUsername(username))
-                    .and(findByRoles(roleNameIn))
+                    .and(findByRoles(roleNames))
                     .and(findByUsernameNot(user.getUsername()))
+                    .and(findByRolesNot(admin))
+                    .and(activeTrue())
             );
             Page<User> all = userRepository.findAll(where,
                     PageRequest.of(page, size)
@@ -237,6 +254,54 @@ public class UserService extends Validator<UserRequest> {
         } catch (Exception e) {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error get all users!", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getUserPasswordWithId(UUID id) {
+        try {
+            Optional<UserPasswords> optionalUserPasswords = userPasswordsRepository.findByUserId(id);
+            if (optionalUserPasswords.isPresent() && optionalUserPasswords.get().getUser().isActive()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("username", optionalUserPasswords.get().getUser().getUsername());
+                response.put("password", passwordActions.decodePassword(optionalUserPasswords.get().getPassword()));
+                return AllApiResponse.response(1, "Success", response);
+            } else return AllApiResponse.response(404, 0, "Password not fount with id!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get password", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getOneUser(UUID id, String expand) {
+        try {
+            Optional<User> op = userRepository.findByIdAndActiveTrue(id);
+            User user = (User) AuthUser.getCurrentUser().getPrincipal();
+            if (op.isPresent() && (user.getId().equals(op.get().getId()) || op.get().getRoles().stream().filter(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN.name())).count() == 0)) {
+                return AllApiResponse.response(1, "One user", DtoConverter.userDto(op.get(), expand));
+            } else {
+                return AllApiResponse.response(404, 0, "User not fount with id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get user", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> deleteUser(UUID id) {
+        try {
+            Optional<User> op = userRepository.findByIdAndActiveTrue(id);
+            User user = (User) AuthUser.getCurrentUser().getPrincipal();
+            if (op.isPresent() && !user.getId().equals(op.get().getId()) && op.get().getRoles().stream().filter(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN)).count() == 0) {
+                User user1 = op.get();
+                user1.setActive(false);
+                userRepository.save(user1);
+                return AllApiResponse.response(1, "User deleted successfully");
+            } else {
+                return AllApiResponse.response(404, 0, "User not fount with id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error delete user", e.getMessage());
         }
     }
 }

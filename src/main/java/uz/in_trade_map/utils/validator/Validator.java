@@ -30,15 +30,18 @@ public class Validator<T> {
                 if (notNull != null) {
                     if (o == null) {
                         err.add(notNull.message());
-                    } else if (notNull.minLength() != -1) {
-                        String val = (String) o;
-                        if (val.length() < notNull.minLength()) {
-                            err.add(field.getName() + " value must be at least " + notNull.minLength() + " characters");
+                    } else {
+                        if (notNull.minLength() != -1) {
+                            String val = (String) o;
+                            if (val.length() < notNull.minLength()) {
+                                err.add(field.getName() + " value must be at least " + notNull.minLength() + " characters");
+                            }
                         }
-                    } else if (notNull.maxLength() != -1) {
-                        String val = (String) o;
-                        if (val.length() > notNull.maxLength()) {
-                            err.add("The " + field.getName() + " value should not exceed " + notNull.maxLength() + " characters");
+                        if (notNull.maxLength() != -1) {
+                            String val = (String) o;
+                            if (val.length() > notNull.maxLength()) {
+                                err.add("The " + field.getName() + " value should not exceed " + notNull.maxLength() + " characters");
+                            }
                         }
                     }
                 }
@@ -56,7 +59,7 @@ public class Validator<T> {
                         if (o instanceof MultipartFile) {
                             o1 = (MultipartFile) o;
                             String filename = o1.getOriginalFilename();
-                            if (filename != null&&!filename.equals("")) {
+                            if (filename != null && !filename.equals("")) {
                                 String ext = filename.substring(filename.lastIndexOf("."));
                                 if (!fieldTypeFile.extension().equals("*")
                                         && ext.length() > 0

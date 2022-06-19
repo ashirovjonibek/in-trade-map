@@ -19,7 +19,7 @@ public class DtoConverter {
         resp.put("nameRu", role.getNameRu());
         resp.put("nameEn", role.getNameEn());
         resp.put("nameUzCry", role.getNameUzCry());
-        resp.put("RoleName", role.getRoleName());
+        resp.put("roleName", role.getRoleName());
         return resp;
     }
 

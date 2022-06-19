@@ -1,4 +1,6 @@
 package uz.in_trade_map.service;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,24 +19,22 @@ import uz.in_trade_map.secret.JwtTokenProvider;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username+" not found"));
+        return userRepository.findByUsernameAndActiveTrue(username).orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
 
-    public User loadByUserId(UUID userId){
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("user not found"));
+    public User loadByUserId(UUID userId) {
+        return userRepository.findByIdAndActiveTrue(userId).orElseThrow(() -> new IllegalStateException("user not found"));
     }
 
     public ResToken signIn(SignIn signIn) {
@@ -46,7 +46,7 @@ public class AuthService implements UserDetailsService {
             User principal = (User) authentication.getPrincipal();
             String jwt = jwtTokenProvider.generateToken(principal);
             return new ResToken(jwt);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

@@ -46,9 +46,14 @@ public class UserSpecifications {
                 .get("firstName"), "%" + firstName + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<User> findByRoles(Set<Role> roles) {
-        return (root, query, builder) -> roles != null ? root
-                .get("roles").in(roles) : query.getGroupRestriction();
+    public static Specification<User> findByRoles(Set<String> roles) {
+        return (root, query, builder) -> roles != null ? root.join("roles")
+                .get("roleName").in(roles) : query.getGroupRestriction();
+    }
+
+    public static Specification<User> findByRolesNot(Set<String> roles) {
+        return (root, query, builder) -> roles != null ? builder.not(root
+                .join("roles").get("roleName").in(roles)) : query.getGroupRestriction();
     }
 
     public static Specification<User> findByLastName(String lastName) {

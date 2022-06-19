@@ -20,9 +20,23 @@ public class PasswordActions {
                 .decode(encodedPassword));
     }
 
-    public String generatePassword() {
-        byte[] array = new byte[7]; // length is bounded by 7
-        new Random().nextBytes(array);
-        return new String(array, StandardCharsets.UTF_8);
+    public String generatePassword(int n) {
+        String alphaNumericString = "ABCDEFGHJKLMNPQRSTUVWXYZ"
+                + "23456789"
+                + "abcdefghijkmnpqrstuvxyz";
+
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            int index
+                    = (int) (alphaNumericString.length()
+                    * Math.random());
+
+            sb.append(alphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
     }
 }
