@@ -79,13 +79,13 @@ public class Product {
     @Column(columnDefinition = "text")
     private String descriptionUzCry;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Company company;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     private List<Attachment> photos;
 
     private Float exportPriceUZS;
