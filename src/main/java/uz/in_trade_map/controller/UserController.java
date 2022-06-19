@@ -5,11 +5,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.service.UserService;
 import uz.in_trade_map.utils.request_objects.UserRequest;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -66,6 +66,26 @@ public class UserController {
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteUser(@PathVariable UUID id) {
         return userService.deleteUser(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('update_user_password')")
+    @PutMapping("/password/{id}")
+    public HttpEntity<?> updateUserPassword(@PathVariable UUID id, @RequestPart String oldPassword, @RequestPart String newPassword) {
+        Map<String, Object> valid = new HashMap<>();
+        if (oldPassword.length() < 8) {
+            List<String> err = new ArrayList<>();
+            err.add("oldPassword length should not be less than 8 characters");
+            valid.put("oldPassword", err);
+        }
+        if (newPassword.length() < 8) {
+            List<String> err = new ArrayList<>();
+            err.add("newPassword length should not be less than 8 characters");
+            valid.put("newPassword", err);
+        }
+        if (valid.size() > 0) {
+            return AllApiResponse.response(422, 0, "Validator errors!", valid);
+        } else
+            return userService.updatePassword(id, newPassword, oldPassword);
     }
 
 

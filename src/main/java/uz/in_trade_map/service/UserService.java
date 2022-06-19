@@ -87,8 +87,11 @@ public class UserService extends Validator<UserRequest> {
 //                    Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
 //                    convertToUser.setLocation(save);
 //                } else return AllApiResponse.response(404, 0, "District not fount with id!");
-                Set<Role> roles = roleRepository.findAllByRoleNameIn(request.getRoles());
-                convertToUser.setRoles(roles);
+                Set<String> collect = request.getRoles().stream().filter(name -> !name.equals(RoleName.ROLE_ADMIN.name())).collect(Collectors.toSet());
+                if (collect.size() > 0) {
+                    Set<Role> roles = roleRepository.findAllByRoleNameIn(collect);
+                    convertToUser.setRoles(roles);
+                } else return AllApiResponse.response(404, 0, "This role not found!");
                 if (request.getPassword() != null) {
                     convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
                     userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
@@ -176,8 +179,11 @@ public class UserService extends Validator<UserRequest> {
 //                        Location save = locationRepository.save(new Location(optionalDistrict.get(), request.getAddress(), request.getLat(), request.getLng()));
 //                        convertToUser.setLocation(save);
 //                    } else return AllApiResponse.response(404, 0, "District not fount with id!");
-                    Set<Role> roles = roleRepository.findAllByRoleNameIn(request.getRoles());
-                    convertToUser.setRoles(roles);
+                    Set<String> collect = request.getRoles().stream().filter(name -> !name.equals(RoleName.ROLE_ADMIN.name())).collect(Collectors.toSet());
+                    if (collect.size() > 0) {
+                        Set<Role> roles = roleRepository.findAllByRoleNameIn(collect);
+                        convertToUser.setRoles(roles);
+                    } else return AllApiResponse.response(404, 0, "This role not found!");
                     if (request.getPassword() != null) {
                         convertToUser.setPassword(passwordEncoder.encode(request.getPassword()));
                         userPasswords.setPassword(passwordActions.encodePassword(request.getPassword()));
@@ -223,7 +229,7 @@ public class UserService extends Validator<UserRequest> {
     ) {
         try {
             Set<Role> roleNameIn = null;
-            Set<String> admin=new HashSet<>();
+            Set<String> admin = new HashSet<>();
             admin.add(RoleName.ROLE_ADMIN.name());
             Set<Role> roleAdmin = roleRepository.findAllByRoleNameIn(admin);
             if (roleNames != null && !roleNames.isEmpty()) {
@@ -302,6 +308,30 @@ public class UserService extends Validator<UserRequest> {
         } catch (Exception e) {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error delete user", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> updatePassword(UUID userId, String newPassword, String oldPassword) {
+        try {
+            Optional<User> optionalUser = userRepository.findByIdAndActiveTrue(userId);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                Optional<UserPasswords> optionalUserPasswords = userPasswordsRepository.findByUserId(userId);
+                if (optionalUserPasswords.isPresent()) {
+                    UserPasswords userPasswords = optionalUserPasswords.get();
+                    String decodePassword = passwordActions.decodePassword(userPasswords.getPassword());
+                    if (decodePassword.equals(oldPassword)) {
+                        user.setPassword(passwordEncoder.encode(newPassword));
+                        userPasswords.setPassword(passwordActions.encodePassword(newPassword));
+                        userRepository.save(user);
+                        userPasswordsRepository.save(userPasswords);
+                        return AllApiResponse.response(1, "Password updated successfully!");
+                    } else return AllApiResponse.response(422, 0, "Old password not match user password!");
+                } else return AllApiResponse.response(422, 0, "You have not access this action!");
+            } else return AllApiResponse.response(404, 0, "User not fount with id!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error update password", e.getMessage());
         }
     }
 }

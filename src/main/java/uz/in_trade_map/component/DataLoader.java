@@ -83,6 +83,8 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("update_user", "Update user"));
             permissions.add(new Permissions("delete_user", "Delete user"));
             permissions.add(new Permissions("get_user_password", "Get user password"));
+            permissions.add(new Permissions("update_user_password", "Update user password"));
+
             List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
 
             List<Role> roles = new ArrayList<>();
@@ -128,9 +130,10 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("update_user", "Update user"));
             permissions.add(new Permissions("delete_user", "Delete user"));
             permissions.add(new Permissions("get_user_password", "Get user password"));
+            permissions.add(new Permissions("update_user_password", "Update user password"));
 
             permissions.forEach(perm -> {
-                if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() ==0) {
+                if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() == 0) {
                     Permissions save = permissionsRepository.save(perm);
                     permissionsList.add(save);
                 }

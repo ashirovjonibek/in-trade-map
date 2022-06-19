@@ -30,6 +30,7 @@ public class CompanyService {
     private final LocationRepository locationRepository;
     private final AttachmentService attachmentService;
     private final DistrictRepository districtRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<?> save(CompanyRequest request) {
         try {
@@ -138,7 +139,14 @@ public class CompanyService {
                     pageable
 
             );
-            List<Map<String, Object>> collect = companies.stream().map(company -> DtoConverter.companyDto(company, expand)).collect(Collectors.toList());
+            List<Map<String, Object>> collect = companies.stream().map(company -> {
+                Map<String, Object> dto = DtoConverter.companyDto(company, expand);
+                if (expand != null && expand.contains("employees")) {
+                    List<User> users = userRepository.findAllByCompanyIdAndActiveTrue(company.getId());
+                    dto.put("employees", users.stream().map(user -> DtoConverter.userDto(user, expand)).collect(Collectors.toList()));
+                }
+                return dto;
+            }).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("items", collect);
             response.put("meta", new Meta(companies.getTotalElements(), companies.getTotalPages(), page, size));
