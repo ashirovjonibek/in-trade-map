@@ -115,7 +115,8 @@ public class ProductService extends Validator<ProductRequest> {
                             .and(findByNameUz(search))
                             .or(findByNameEn(search))
                             .or(findByNameRu(search))
-                            .or(findByNameUzCry(search)),
+                            .or(findByNameUzCry(search))
+                            .and(activeTrue()),
                     pageable
             );
             Map<String, Object> response = new HashMap<>();
