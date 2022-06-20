@@ -130,4 +130,16 @@ public class ProductService extends Validator<ProductRequest> {
 
     }
 
+    public ResponseEntity<?> getOneProduct(UUID id, String expand) {
+        try {
+            Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
+            if (optionalProduct.isPresent()) {
+                return AllApiResponse.response(1, "Success", DtoConverter.productDto(optionalProduct.get(), expand));
+            } else return AllApiResponse.response(404, "Product not fount with id!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error get one product!", e.getMessage());
+        }
+    }
+
 }
