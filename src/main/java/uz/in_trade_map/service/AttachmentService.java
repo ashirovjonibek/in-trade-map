@@ -50,7 +50,7 @@ public class AttachmentService {
                         attachments.add(save);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        throw(new IllegalStateException("Error saved file!"));
+                        throw (new IllegalStateException("Error saved file!"));
                     }
                 } else {
                     Attachment attachment = new Attachment(
@@ -73,7 +73,7 @@ public class AttachmentService {
                         attachments.add(attachmentRepository.save(savedAttachment));
                     } catch (IOException e) {
                         e.printStackTrace();
-                        throw(new IllegalStateException("Error saved file!"));
+                        throw (new IllegalStateException("Error saved file!"));
                     }
                 }
             });
@@ -153,6 +153,10 @@ public class AttachmentService {
             throw new IllegalArgumentException("Data not found with file id!");
         }
 
+    }
+
+    public List<Attachment> getAttachments(List<UUID> attachmentIds) {
+        return attachmentRepository.findAllById(attachmentIds);
     }
 
     public ResponseEntity<?> deleteAttachment(UUID id) {

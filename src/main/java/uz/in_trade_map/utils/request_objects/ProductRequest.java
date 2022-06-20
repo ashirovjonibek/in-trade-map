@@ -10,6 +10,7 @@ import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -58,9 +59,8 @@ public class ProductRequest {
     @NotNull
     private Integer companyId;
 
-    @NotNull
-    @FieldTypeFile(extension = ".png,.jpg,.jpeg")
-    @FieldTypeArray(minLength = 2,maxLength = 6)
+    @FieldTypeFile(extension = ".png,.jpg,.jpeg", size = 2 * 1024 * 1024)
+    @FieldTypeArray(minLength = 2, maxLength = 6)
     private List<MultipartFile> photos;
 
     @NotNull
@@ -80,6 +80,8 @@ public class ProductRequest {
     private String weight;
 
     private String materialType;
+
+    private List<UUID> oldPhotoIds;
 
     public static Product convertToProduct(ProductRequest request) {
         return Product.builder()
