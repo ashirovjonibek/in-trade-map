@@ -87,4 +87,8 @@ public class Company implements Serializable {
 
     @OneToOne(fetch = FetchType.EAGER)
     private ContactData data;
+
+    private boolean productAlwaysConfirm = false;
+
+    private boolean blocked=false;
 }

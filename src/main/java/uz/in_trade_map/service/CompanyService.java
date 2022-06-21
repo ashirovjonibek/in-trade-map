@@ -55,7 +55,7 @@ public class CompanyService {
         }
     }
 
-    public ResponseEntity<?> edit(Integer id, CompanyRequest request, UUID[] oldPhotoIds) {
+    public ResponseEntity<?> edit(Integer id, CompanyRequest request, UUID[] oldPhotoIds, Integer oldImage, Integer oldLogo) {
         try {
             Optional<Company> companyOptional = companyRepository.findByIdAndActiveTrue(id);
             if (companyOptional.isPresent()) {
@@ -67,12 +67,16 @@ public class CompanyService {
                     if (request.getLogo() != null) {
                         company.setLogo(attachmentService.uploadFile(request.getLogo()));
                     } else {
-                        company.setImage(companyOptional.get().getImage());
+                        if (oldLogo == 1) {
+                            company.setLogo(companyOptional.get().getLogo());
+                        } else company.setLogo(null);
                     }
                     if (request.getImage() != null) {
-                        company.setLogo(attachmentService.uploadFile(request.getImage()));
+                        company.setImage(attachmentService.uploadFile(request.getImage()));
                     } else {
-                        company.setLogo(companyOptional.get().getLogo());
+                        if (oldImage == 1) {
+                            company.setImage(companyOptional.get().getImage());
+                        } else company.setImage(null);
                     }
                     if (request.getCertificates() != null && request.getCertificates().length > 0) {
                         List<Attachment> attachments = attachmentService.uploadFile(Arrays.asList(request.getCertificates()));
@@ -162,6 +166,21 @@ public class CompanyService {
             Optional<Company> byIdAndActiveTrue = companyRepository.findByIdAndActiveTrue(id);
             if (byIdAndActiveTrue.isPresent()) {
                 return AllApiResponse.response(1, "Success", DtoConverter.companyDto(byIdAndActiveTrue.get(), expand));
+            } else return AllApiResponse.response(404, 0, "Company not fount with id!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AllApiResponse.response(500, 0, "Error for get company!");
+        }
+    }
+
+    public HttpEntity<?> setConfirmStatus(Integer id, Integer status) {
+        try {
+            Optional<Company> byIdAndActiveTrue = companyRepository.findByIdAndActiveTrue(id);
+            if (byIdAndActiveTrue.isPresent()) {
+                Company company = byIdAndActiveTrue.get();
+                company.setProductAlwaysConfirm(status == 1);
+                companyRepository.save(company);
+                return AllApiResponse.response(1, "Company status changes successfully");
             } else return AllApiResponse.response(404, 0, "Company not fount with id!");
         } catch (Exception e) {
             e.printStackTrace();

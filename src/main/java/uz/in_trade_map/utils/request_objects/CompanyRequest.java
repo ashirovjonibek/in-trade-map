@@ -66,6 +66,8 @@ public class CompanyRequest {
 
     private Float lng;
 
+    private boolean productAlwaysConfirm;
+
     public static Company convertCompany(CompanyRequest request) {
         return Company.builder()
                 .brandName(request.getBrandName())
@@ -83,6 +85,8 @@ public class CompanyRequest {
                 .shortDescriptionUzCry(request.getShortDescriptionUzCry())
                 .inn(request.getInn())
                 .active(true)
+                .blocked(false)
+                .productAlwaysConfirm(request.isProductAlwaysConfirm())
                 .build();
     }
 }

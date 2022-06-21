@@ -83,13 +83,14 @@ public class DtoConverter {
         response.put("descriptionUz", company.getDescriptionUz());
         response.put("descriptionRu", company.getDescriptionRu());
         response.put("descriptionEn", company.getDescriptionEn());
+        response.put("alwaysConfirmProducts", company.isProductAlwaysConfirm() ? 1 : 0);
         response.put("descriptionUzCry", company.getDescriptionUzCry());
         response.put("createdById", company.getCreatedBy() != null ? company.getCreatedBy().getId() : null);
         response.put("updatedById", company.getUpdatedBy() != null ? company.getUpdatedBy().getId() : null);
         response.put("logoId", company.getLogo() != null ? company.getLogo().getId() : null);
         response.put("imageId", company.getImage() != null ? company.getImage().getId() : null);
         response.put("certificates", company.getCertificates() != null
-                ? company.getCertificates().stream().map(cer -> cer.getId()).collect(Collectors.toList())
+                ? company.getCertificates().stream().map(Attachment::getId).collect(Collectors.toList())
                 : null);
         if (expand != null) {
             if (expand.contains("contactData")) {
@@ -133,6 +134,7 @@ public class DtoConverter {
         response.put("weight", product.getWeight());
         response.put("materialType", product.getMaterialType());
         response.put("view", product.getViews());
+        response.put("confirmStatus", product.getConfirmStatus());
         response.put("categoryId", product.getCategory() != null ? product.getCategory().getId() : null);
         response.put("companyId", product.getCompany() != null ? product.getCompany().getId() : null);
         response.put("createdById", product.getCreatedBy() != null ? product.getCreatedBy().getId() : null);

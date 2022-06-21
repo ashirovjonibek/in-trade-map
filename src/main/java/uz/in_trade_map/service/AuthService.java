@@ -10,9 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import uz.in_trade_map.dtos.ResToken;
 import uz.in_trade_map.dtos.SignIn;
 import uz.in_trade_map.entity.User;
+import uz.in_trade_map.entity.enums.RoleName;
+import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.UserRepository;
 import uz.in_trade_map.secret.JwtTokenProvider;
 
@@ -44,6 +47,9 @@ public class AuthService implements UserDetailsService {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User principal = (User) authentication.getPrincipal();
+            if (principal.getCompany()!=null&&!principal.getCompany().isActive()){
+                throw new IllegalStateException("Your company is blocked!");
+            }
             String jwt = jwtTokenProvider.generateToken(principal);
             return new ResToken(jwt);
         } catch (Exception e) {

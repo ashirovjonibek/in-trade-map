@@ -43,7 +43,13 @@ public class CompanyController extends Validator<CompanyRequest> {
 
     @PreAuthorize("hasAnyAuthority('update_company')")
     @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public HttpEntity<?> update(@PathVariable Integer id, @ModelAttribute CompanyRequest request, @RequestPart(required = false) String oldPhotoIds) {
+    public HttpEntity<?> update(
+            @PathVariable Integer id,
+            @ModelAttribute CompanyRequest request,
+            @RequestPart(required = false) String oldPhotoIds,
+            @RequestPart(required = false) Integer oldImage,
+            @RequestPart(required = false) Integer oldLogo
+    ) {
         Map<String, Object> valid = valid(request);
         if (valid.size() > 0) {
             return AllApiResponse.response(422, 0, "Validator errors!", valid);
@@ -53,7 +59,7 @@ public class CompanyController extends Validator<CompanyRequest> {
             for (int i = 0; i < split.length; i++) {
                 uuids[i] = UUID.fromString(split[i]);
             }
-            return companyService.edit(id, request, uuids);
+            return companyService.edit(id, request, uuids, oldImage, oldLogo);
         }
     }
 
@@ -89,6 +95,11 @@ public class CompanyController extends Validator<CompanyRequest> {
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Integer id, @RequestParam(required = false) String expand) {
         return companyService.getOne(id, expand);
+    }
+
+    @PostMapping(value = "/status/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public HttpEntity<?> changeStatus(@PathVariable Integer id, @RequestParam Integer status) {
+        return companyService.setConfirmStatus(id, status);
     }
 
     @PreAuthorize("hasAnyAuthority('delete_company')")

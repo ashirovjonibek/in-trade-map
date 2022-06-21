@@ -103,4 +103,6 @@ public class Product {
     private String materialType;
 
     private int views = 0;
+
+    private int confirmStatus=0;
 }

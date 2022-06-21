@@ -25,12 +25,6 @@ public class UserSpecifications {
                 .get("id"), districtId) : query.getGroupRestriction();
     }
 
-    public static Specification<User> findByLocationId(Integer locationId) {
-        return (root, query, builder) -> locationId != null ? builder.equal(root
-                .get("location")
-                .get("id"), locationId) : query.getGroupRestriction();
-    }
-
     public static Specification<User> findByUsername(String username) {
         return (root, query, builder) -> username != null ? builder.like(root
                 .get("username"), "%" + username + "%") : query.getGroupRestriction();
@@ -83,6 +77,12 @@ public class UserSpecifications {
 
     public static Specification<User> activeTrue() {
         return (root, query, builder) -> builder.equal(root
+                .get("active"), true);
+    }
+
+    public static Specification<User> companyActiveTrue() {
+        return (root, query, builder) -> builder.equal(root
+                .get("company")
                 .get("active"), true);
     }
 

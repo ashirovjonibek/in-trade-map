@@ -4,6 +4,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.Company;
 import uz.in_trade_map.entity.Product;
+import uz.in_trade_map.entity.User;
+import uz.in_trade_map.utils.AuthUser;
 
 @Component
 public class ProductSpecifications {
@@ -62,6 +64,11 @@ public class ProductSpecifications {
     public static Specification<Product> findByNameUzCry(String nameUzCry) {
         return (root, query, builder) -> nameUzCry != null ? builder.like(root
                 .get("nameUzCry"), "%" + nameUzCry + "%") : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findByConfirmStatus(Integer status) {
+        return (root, query, builder) -> status != null ? builder.equal(root
+                .get("confirmStatus"), status) : query.getGroupRestriction();
     }
 
     public static Specification<Product> activeTrue() {

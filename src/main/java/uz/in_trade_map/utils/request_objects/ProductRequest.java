@@ -83,6 +83,8 @@ public class ProductRequest {
 
     private List<UUID> oldPhotoIds;
 
+    private Integer confirmStatus;
+
     public static Product convertToProduct(ProductRequest request) {
         return Product.builder()
                 .descriptionEn(request.getDescriptionEn())

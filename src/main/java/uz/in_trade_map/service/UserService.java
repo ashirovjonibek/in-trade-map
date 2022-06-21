@@ -249,6 +249,7 @@ public class UserService extends Validator<UserRequest> {
                     .and(findByUsernameNot(user.getUsername()))
                     .and(findByRolesNot(admin))
                     .and(activeTrue())
+                    .and(companyActiveTrue())
             );
             Page<User> all = userRepository.findAll(where,
                     PageRequest.of(page, size)
