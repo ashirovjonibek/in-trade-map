@@ -67,6 +67,7 @@ public class ProductSpecifications {
     }
 
     public static Specification<Product> findByConfirmStatus(Integer status) {
+        System.out.println(status);
         return (root, query, builder) -> status != null ? builder.equal(root
                 .get("confirmStatus"), status) : query.getGroupRestriction();
     }

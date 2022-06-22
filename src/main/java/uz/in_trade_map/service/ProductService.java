@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
@@ -32,7 +33,15 @@ public class ProductService extends Validator<ProductRequest> {
     private final CategoryRepository categoryRepository;
     private final AttachmentService attachmentService;
     private final RejectedMessageRepository rejectedMessageRepository;
-    User user = (User) AuthUser.getCurrentUser();
+
+    public User user() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals("" + authentication.getPrincipal()))) {
+            return ((User) authentication.getPrincipal());
+        }
+        return null;
+    }
 
     public ResponseEntity<?> create(ProductRequest request) {
         try {
@@ -41,7 +50,7 @@ public class ProductService extends Validator<ProductRequest> {
                 return AllApiResponse.response(422, 0, "Validator errors!", valid);
             } else {
                 Product product = ProductRequest.convertToProduct(request);
-                product.setConfirmStatus(user.getCompany() == null ? 1 : user.getCompany() != null && user.getCompany().isProductAlwaysConfirm() ? 1 : 0);
+                product.setConfirmStatus(user().getCompany() == null ? 1 : user().getCompany() != null && user().getCompany().isProductAlwaysConfirm() ? 1 : 0);
                 product.setPhotos(attachmentService.uploadFile(request.getPhotos()));
                 Optional<Company> optionalCompany = companyRepository.findByIdAndActiveTrue(request.getCompanyId());
                 if (optionalCompany.isPresent()) {
@@ -69,7 +78,7 @@ public class ProductService extends Validator<ProductRequest> {
                 Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
                 if (optionalProduct.isPresent()) {
                     Product product = ProductRequest.convertToProduct(request);
-                    product.setConfirmStatus(user.getCompany() == null ? 1 : user.getCompany() != null && user.getCompany().isProductAlwaysConfirm() ? 1 : 0);
+                    product.setConfirmStatus(user().getCompany() == null ? 1 : user().getCompany() != null && user().getCompany().isProductAlwaysConfirm() ? 1 : 0);
                     List<Attachment> attachments = attachmentService.uploadFile(request.getPhotos());
                     if (request.getOldPhotoIds() != null && request.getOldPhotoIds().size() > 0) {
                         if (attachments != null) {
@@ -112,8 +121,12 @@ public class ProductService extends Validator<ProductRequest> {
     ) {
         try {
             Pageable pageable = PageRequest.of(page - 1, size);
+            User user = user();
+            if (user == null) {
+                confirmStatus = 1;
+            }
             Page<Product> products = productRepository.findAll(where(
-                    findByCompanyId(user != null && user.getCompany() != null ? user.getCompany().getId() : companyId))
+                    findByCompanyId(user() != null && user().getCompany() != null ? user().getCompany().getId() : companyId))
                             .and(findByCategoryId(categoryId))
                             .and(findByDistrictId(districtId))
                             .and(findByRegionId(regionId))
@@ -122,7 +135,7 @@ public class ProductService extends Validator<ProductRequest> {
                             .or(findByNameEn(search))
                             .or(findByNameRu(search))
                             .or(findByNameUzCry(search))
-                            .and(findByConfirmStatus(user == null ? 1 : confirmStatus))
+                            .and(findByConfirmStatus(confirmStatus))
                             .and(activeTrue()),
                     pageable
             );
@@ -130,7 +143,7 @@ public class ProductService extends Validator<ProductRequest> {
             response.put("meta", new Meta(products.getTotalElements(), products.getTotalPages(), page, size));
             response.put("items", products.stream().map(product -> {
                 Map<String, Object> map = DtoConverter.productDto(product, expand);
-                if (product.getConfirmStatus() == 2 && user != null) {
+                if (product.getConfirmStatus() == 2 && user() != null) {
                     List<RejectedMessage> rejectedMessageList = rejectedMessageRepository.findAllByActiveTrueAndTableNameAndTableRowId("product", product.getId().toString());
                     map.put("rejectMessage", rejectedMessageList.stream().map(RejectedMessage::getMessage));
                 }
@@ -147,12 +160,12 @@ public class ProductService extends Validator<ProductRequest> {
     public ResponseEntity<?> getOneProduct(UUID id, String expand) {
         try {
             Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
-            if (optionalProduct.isPresent() && (optionalProduct.get().getConfirmStatus() == 1 || user != null)) {
+            if (optionalProduct.isPresent() && (optionalProduct.get().getConfirmStatus() == 1 || user() != null)) {
                 Product product = optionalProduct.get();
                 product.setViews(product.getViews() + 1);
                 Product save = productRepository.save(product);
                 Map<String, Object> map = DtoConverter.productDto(save, expand);
-                if (save.getConfirmStatus() == 2 && user != null) {
+                if (save.getConfirmStatus() == 2 && user() != null) {
                     List<RejectedMessage> rejectedMessageList = rejectedMessageRepository.findAllByActiveTrueAndTableNameAndTableRowId("product", save.getId().toString());
                     map.put("rejectMessage", rejectedMessageList.stream().map(RejectedMessage::getMessage));
                 }
