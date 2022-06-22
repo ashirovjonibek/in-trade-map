@@ -156,7 +156,7 @@ public class AttachmentService {
     }
 
     public List<Attachment> getAttachments(List<UUID> attachmentIds) {
-        return attachmentRepository.findAllById(attachmentIds);
+        return attachmentIds != null ? attachmentRepository.findAllById(attachmentIds) : null;
     }
 
     public ResponseEntity<?> deleteAttachment(UUID id) {
