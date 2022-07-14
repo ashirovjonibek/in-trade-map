@@ -1,8 +1,6 @@
 package uz.in_trade_map.utils.dto_converter;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.*;
 import uz.in_trade_map.utils.AuthUser;
 
