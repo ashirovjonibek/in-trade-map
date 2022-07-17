@@ -109,6 +109,43 @@ public class DtoConverter {
         return response;
     }
 
+    public static Map<String, Object> emptySpacesDto(EmptySpace emptySpace, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", emptySpace.getId());
+        response.put("descriptionUz", emptySpace.getDescriptionUz());
+        response.put("descriptionRu", emptySpace.getDescriptionRu());
+        response.put("descriptionEn", emptySpace.getDescriptionEn());
+        response.put("descriptionUzCry", emptySpace.getDescriptionUzCry());
+        response.put("phoneNumber", emptySpace.getPhoneNumber());
+        response.put("fieldSurface", emptySpace.getFieldSurface());
+        response.put("functionality", emptySpace.getFunctionality());
+        response.put("startingPrice", emptySpace.getStartingPrice());
+        response.put("annualPrice", emptySpace.getAnnualPrice());
+        response.put("address", emptySpace.getAddress());
+        response.put("lat", emptySpace.getLat());
+        response.put("lng", emptySpace.getLng());
+        response.put("districtId", emptySpace.getDistrict() != null ? emptySpace.getDistrict().getId() : null);
+        response.put("createdById", emptySpace.getCreatedBy() != null ? emptySpace.getCreatedBy().getId() : null);
+        response.put("updatedById", emptySpace.getUpdatedBy() != null ? emptySpace.getUpdatedBy().getId() : null);
+        response.put("createdAt", emptySpace.getCreatedAt());
+        response.put("updatedAt", emptySpace.getUpdatedAt());
+        response.put("photos", emptySpace.getPhotos() != null
+                ? emptySpace.getPhotos().stream().map(Attachment::getId).collect(Collectors.toList())
+                : null);
+        if (expand != null) {
+            if (expand.contains("district")) {
+                response.put("district", emptySpace.getDistrict());
+            }
+            if (expand.contains("createdBy") && emptySpace.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(emptySpace.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && emptySpace.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(emptySpace.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
+
     public static Map<String, Object> productDto(Product product, String expand) {
         Map<String, Object> response = new HashMap<>();
         response.put("id", product.getId());

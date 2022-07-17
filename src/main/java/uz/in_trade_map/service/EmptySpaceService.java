@@ -9,6 +9,7 @@ import uz.in_trade_map.entity.EmptySpace;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.DistrictRepository;
 import uz.in_trade_map.repository.EmptySpaceRepository;
+import uz.in_trade_map.utils.dto_converter.DtoConverter;
 import uz.in_trade_map.utils.request_objects.EmptySpaceRequest;
 import uz.in_trade_map.utils.validator.Validator;
 
@@ -37,7 +38,7 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
                     emptySpace.setPhotos(attachmentService.uploadFile(request.getPhotos()));
                 }
                 EmptySpace save = emptySpaceRepository.save(emptySpace);
-                return AllApiResponse.response(1, "Empty space created successfully", save);
+                return AllApiResponse.response(1, "Empty space created successfully", DtoConverter.emptySpacesDto(save, null));
             } else return AllApiResponse.response(422, 0, "Validator errors!", valid);
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,28 +46,28 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
         }
     }
 
-    public ResponseEntity<?> update(Integer id, EmptySpaceRequest request, List<UUID> oldPhotoIds) {
+    public ResponseEntity<?> update(Integer id, EmptySpaceRequest request) {
         try {
             Optional<EmptySpace> optionalEmptySpace = emptySpaceRepository.findByIdAndActiveTrue(id);
             if (optionalEmptySpace.isPresent()) {
                 Map<String, Object> valid = valid(request);
                 if (valid.size() == 0) {
-                    EmptySpace emptySpace = EmptySpaceRequest.convertToEmptySpace(request);
+                    EmptySpace emptySpace = EmptySpaceRequest.convertToEmptySpace(request, optionalEmptySpace.get());
                     Optional<District> optionalDistrict = districtRepository.findById(request.getDistrictId());
                     if (optionalDistrict.isPresent()) {
                         emptySpace.setDistrict(optionalDistrict.get());
                     } else return AllApiResponse.response(404, 0, "District not fount with id!");
                     if (request.getPhotos() != null) {
                         List<Attachment> attachments = attachmentService.uploadFile(request.getPhotos());
-                        if (oldPhotoIds != null && oldPhotoIds.size() > 0) {
-                            List<Attachment> attachmentList = attachmentService.getAttachments(oldPhotoIds);
+                        if (request.getOldPhotoIds() != null && request.getOldPhotoIds().size() > 0) {
+                            List<Attachment> attachmentList = attachmentService.getAttachments(request.getOldPhotoIds());
                             if (attachmentList != null && attachmentList.size() > 0)
                                 attachments.addAll(attachmentList);
                         }
                         emptySpace.setPhotos(attachments);
                     } else {
-                        if (oldPhotoIds != null && oldPhotoIds.size() > 0) {
-                            List<Attachment> attachmentList = attachmentService.getAttachments(oldPhotoIds);
+                        if (request.getOldPhotoIds() != null && request.getOldPhotoIds().size() > 0) {
+                            List<Attachment> attachmentList = attachmentService.getAttachments(request.getOldPhotoIds());
                             if (attachmentList != null && attachmentList.size() > 0)
                                 emptySpace.setPhotos(attachmentList);
                             else emptySpace.setPhotos(null);
@@ -75,12 +76,12 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
 
                     emptySpace.setId(id);
                     EmptySpace save = emptySpaceRepository.save(emptySpace);
-                    return AllApiResponse.response(1, "Empty space created successfully", save);
+                    return AllApiResponse.response(1, "Empty space updated successfully", DtoConverter.emptySpacesDto(save, null));
                 } else return AllApiResponse.response(422, 0, "Validator errors!", valid);
-            } else return AllApiResponse.response(404, 0, "Empty not fount with id!");
+            } else return AllApiResponse.response(404, 0, "Empty space not fount with id!");
         } catch (Exception e) {
             e.printStackTrace();
-            return AllApiResponse.response(500, 0, "Error create empty space!", e.getMessage());
+            return AllApiResponse.response(500, 0, "Error update empty space!", e.getMessage());
         }
     }
 

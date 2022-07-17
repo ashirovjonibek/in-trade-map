@@ -23,7 +23,7 @@ public class EmptySpaceController {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public HttpEntity<?> update(@PathVariable Integer id, @ModelAttribute EmptySpaceRequest request, @RequestPart(required = false) String[] oldPhotoIds) {
-        return emptySpaceService.update(id, request, Arrays.stream(oldPhotoIds).map(UUID::fromString).collect(Collectors.toList()));
+    public HttpEntity<?> update(@PathVariable Integer id, @ModelAttribute EmptySpaceRequest request) {
+        return emptySpaceService.update(id, request);
     }
 }

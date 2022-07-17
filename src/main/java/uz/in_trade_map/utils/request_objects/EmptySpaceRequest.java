@@ -10,6 +10,7 @@ import uz.in_trade_map.utils.validator.annotations.FieldTypeFile;
 import uz.in_trade_map.utils.validator.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -56,6 +57,8 @@ public class EmptySpaceRequest {
     @FieldTypeFile(extension = ".png,.jpeg,.jpg", size = 3 * 1024 * 1024)
     private List<MultipartFile> photos;
 
+    private List<UUID> oldPhotoIds;
+
     public static EmptySpace convertToEmptySpace(EmptySpaceRequest request) {
         return EmptySpace.builder()
                 .descriptionEn(request.getDescriptionEn())
@@ -70,6 +73,24 @@ public class EmptySpaceRequest {
                 .lng(request.getLng())
                 .startingPrice(request.getStartingPrice())
                 .annualPrice(request.getAnnualPrice())
+                .active(true)
                 .build();
+    }
+
+    public static EmptySpace convertToEmptySpace(EmptySpaceRequest request, EmptySpace emptySpace) {
+        emptySpace.setDescriptionEn(request.getDescriptionEn());
+        emptySpace.setDescriptionRu(request.getDescriptionRu());
+        emptySpace.setDescriptionUz(request.getDescriptionUz());
+        emptySpace.setDescriptionUzCry(request.getDescriptionUzCry());
+        emptySpace.setFieldSurface(request.getFieldSurface());
+        emptySpace.setPhoneNumber(request.getPhoneNumber());
+        emptySpace.setFunctionality(request.getFunctionality());
+        emptySpace.setAddress(request.getAddress());
+        emptySpace.setLat(request.getLat());
+        emptySpace.setLng(request.getLng());
+        emptySpace.setStartingPrice(request.getStartingPrice());
+        emptySpace.setAnnualPrice(request.getAnnualPrice());
+        emptySpace.setActive(true);
+        return emptySpace;
     }
 }
