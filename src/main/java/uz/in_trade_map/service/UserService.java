@@ -1,5 +1,6 @@
 package uz.in_trade_map.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -251,9 +252,11 @@ public class UserService extends Validator<UserRequest> {
                     .and(activeTrue())
                     .and(companyActiveTrue())
             );
+
             Page<User> all = userRepository.findAll(where,
                     PageRequest.of(page, size)
             );
+
             Map<String, Object> response = new HashMap<>();
             response.put("meta", new Meta(all.getTotalElements(), all.getTotalPages(), page + 1, size));
             response.put("items", all.stream().map(user1 -> DtoConverter.userDto(user1, expand)).collect(Collectors.toList()));
