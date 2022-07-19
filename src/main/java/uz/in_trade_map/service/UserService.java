@@ -1,16 +1,19 @@
 package uz.in_trade_map.service;
 
-import com.querydsl.jpa.impl.JPAQuery;
+//import com.querydsl.jpa.impl.JPAQuery;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.in_trade_map.dtos.Meta;
-import uz.in_trade_map.entity.*;
+import uz.in_trade_map.entity.Company;
+import uz.in_trade_map.entity.Role;
+import uz.in_trade_map.entity.User;
+import uz.in_trade_map.entity.UserPasswords;
 import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
@@ -22,8 +25,8 @@ import uz.in_trade_map.utils.validator.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.data.jpa.domain.Specification.where;
 import static uz.in_trade_map.service.specifications.UserSpecifications.*;
-import static org.springframework.data.jpa.domain.Specification.*;
 
 @Service
 @RequiredArgsConstructor

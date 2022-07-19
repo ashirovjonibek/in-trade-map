@@ -30,24 +30,39 @@ public class EmptySpaceSpecifications {
                 .get("descriptionUz"), "%" + search + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<EmptySpace> findAllByGreaterStartingPrice(Float maxPrice) {
-        return (root, query, builder) -> maxPrice != null ? builder.greaterThanOrEqualTo(root
-                .get("startingPrice"), maxPrice) : query.getGroupRestriction();
+    public static Specification<EmptySpace> findByDescriptionRu(String search) {
+        return (root, query, builder) -> search != null ? builder.like(root
+                .get("descriptionRu"), "%" + search + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<EmptySpace> findAllByLessStartingPrice(Float minPrice) {
-        return (root, query, builder) -> minPrice != null ? builder.greaterThanOrEqualTo(root
-                .get("startingPrice"), minPrice) : query.getGroupRestriction();
+    public static Specification<EmptySpace> findByDescriptionEn(String search) {
+        return (root, query, builder) -> search != null ? builder.like(root
+                .get("descriptionEn"), "%" + search + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<EmptySpace> findAllByGreaterAnnualPrice(Float maxPrice) {
-        return (root, query, builder) -> maxPrice != null ? builder.lessThanOrEqualTo(root
-                .get("annualPrice"), maxPrice) : query.getGroupRestriction();
+    public static Specification<EmptySpace> findByDescriptionUzCry(String search) {
+        return (root, query, builder) -> search != null ? builder.like(root
+                .get("descriptionUzCry"), "%" + search + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<EmptySpace> findAllByLessAnnualPrice(Float minPrice) {
-        return (root, query, builder) -> minPrice != null ? builder.lessThanOrEqualTo(root
-                .get("annualPrice"), minPrice) : query.getGroupRestriction();
+    public static Specification<EmptySpace> findAllByGreaterStartingPrice(Float minSPrice) {
+        return (root, query, builder) -> minSPrice != null ? builder.greaterThanOrEqualTo(root
+                .get("startingPrice"), minSPrice) : query.getGroupRestriction();
+    }
+
+    public static Specification<EmptySpace> findAllByLessStartingPrice(Float maxSPrice) {
+        return (root, query, builder) -> maxSPrice != null ? builder.greaterThanOrEqualTo(root
+                .get("startingPrice"), maxSPrice) : query.getGroupRestriction();
+    }
+
+    public static Specification<EmptySpace> findAllByGreaterAnnualPrice(Float minAPrice) {
+        return (root, query, builder) -> minAPrice != null ? builder.lessThanOrEqualTo(root
+                .get("annualPrice"), minAPrice) : query.getGroupRestriction();
+    }
+
+    public static Specification<EmptySpace> findAllByLessAnnualPrice(Float maxAPrice) {
+        return (root, query, builder) -> maxAPrice != null ? builder.lessThanOrEqualTo(root
+                .get("annualPrice"), maxAPrice) : query.getGroupRestriction();
     }
 
     public static Specification<EmptySpace> activeTrue() {
