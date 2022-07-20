@@ -117,19 +117,10 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
             );
             Stream<Map<String, Object>> items = all.stream().map(emptySpace -> DtoConverter.emptySpacesDto(emptySpace, expand));
             Meta meta = new Meta(all.getTotalElements(), all.getTotalPages(), page, size);
-            Float startingPriceMax = emptySpaceRepository.maxStartingPrice();
-            Float startingPriceMin = emptySpaceRepository.minStartingPrice();
-            Float annualPriceMax = emptySpaceRepository.maxAnnualPrice();
-            Float annualPriceMin = emptySpaceRepository.minAnnualPrice();
-            Map<String, Float> maxMin = new HashMap<>();
-            maxMin.put("maxStartingPrice", startingPriceMax);
-            maxMin.put("minStartingPrice", startingPriceMin);
-            maxMin.put("maxAnnualPrice", annualPriceMax);
-            maxMin.put("minAnnualPrice", annualPriceMin);
             Map<String, Object> response = new HashMap<>();
             response.put("items", items);
             response.put("meta", meta);
-            response.put("maxMinPrices", maxMin);
+            response.put("maxMinPrices", emptySpaceRepository.maxMinPrices());
             return AllApiResponse.response(1, "All empty spaces!", response);
         } catch (Exception e) {
             e.printStackTrace();

@@ -114,6 +114,14 @@ public class ProductService extends Validator<ProductRequest> {
             Integer categoryId,
             Integer companyId,
             String brandName,
+            Float maxPriceUZS,
+            Float minPriceUZS,
+            Float minPriceUSD,
+            Float maxPriceUSD,
+            Float maxExportPriceUZS,
+            Float minExportPriceUZS,
+            Float minExportPriceUSD,
+            Float maxExportPriceUSD,
             Integer confirmStatus,
             int size,
             int page,
@@ -136,6 +144,14 @@ public class ProductService extends Validator<ProductRequest> {
                             .or(findByNameRu(search))
                             .or(findByNameUzCry(search))
                             .and(findByConfirmStatus(confirmStatus))
+                            .and(findAllByGreaterPriceUZS(minPriceUZS))
+                            .and(findAllByLessPriceUZS(maxPriceUZS))
+                            .and(findAllByGreaterPriceUSD(minPriceUSD))
+                            .and(findAllByLessPriceUSD(maxPriceUSD))
+                            .and(findAllByGreaterExportPriceUZS(minExportPriceUZS))
+                            .and(findAllByLessExportPriceUZS(maxExportPriceUZS))
+                            .and(findAllByGreaterExportPriceUSD(minExportPriceUSD))
+                            .and(findAllByLessExportPriceUSD(maxExportPriceUSD))
                             .and(activeTrue()),
                     pageable
             );
@@ -149,6 +165,7 @@ public class ProductService extends Validator<ProductRequest> {
                 }
                 return map;
             }));
+            response.put("maxMinPrices", productRepository.maxMinPrices());
             return AllApiResponse.response(1, "Success", response);
         } catch (Exception e) {
             e.printStackTrace();

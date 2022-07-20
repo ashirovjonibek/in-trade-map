@@ -3,6 +3,7 @@ package uz.in_trade_map.service.specifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.Company;
+import uz.in_trade_map.entity.EmptySpace;
 import uz.in_trade_map.entity.Product;
 import uz.in_trade_map.entity.User;
 import uz.in_trade_map.utils.AuthUser;
@@ -70,6 +71,46 @@ public class ProductSpecifications {
         System.out.println(status);
         return (root, query, builder) -> status != null ? builder.equal(root
                 .get("confirmStatus"), status) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByLessPriceUZS(Float maxPriceUZS) {
+        return (root, query, builder) -> maxPriceUZS != null ? builder.lessThanOrEqualTo(root
+                .get("priceUZS"), maxPriceUZS) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByLessPriceUSD(Float maxPriceUSD) {
+        return (root, query, builder) -> maxPriceUSD != null ? builder.lessThanOrEqualTo(root
+                .get("priceUSD"), maxPriceUSD) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByGreaterPriceUZS(Float minPriceUZS) {
+        return (root, query, builder) -> minPriceUZS != null ? builder.greaterThanOrEqualTo(root
+                .get("priceUZS"), minPriceUZS) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByGreaterPriceUSD(Float minPriceUSD) {
+        return (root, query, builder) -> minPriceUSD != null ? builder.greaterThanOrEqualTo(root
+                .get("priceUSD"), minPriceUSD) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByLessExportPriceUZS(Float maxExportPriceUZS) {
+        return (root, query, builder) -> maxExportPriceUZS != null ? builder.lessThanOrEqualTo(root
+                .get("exportPriceUZS"), maxExportPriceUZS) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByLessExportPriceUSD(Float maxExportPriceUSD) {
+        return (root, query, builder) -> maxExportPriceUSD != null ? builder.lessThanOrEqualTo(root
+                .get("exportPriceUSD"), maxExportPriceUSD) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByGreaterExportPriceUZS(Float minExportPriceUZS) {
+        return (root, query, builder) -> minExportPriceUZS != null ? builder.greaterThanOrEqualTo(root
+                .get("exportPriceUZS"), minExportPriceUZS) : query.getGroupRestriction();
+    }
+
+    public static Specification<Product> findAllByGreaterExportPriceUSD(Float minExportPriceUSD) {
+        return (root, query, builder) -> minExportPriceUSD != null ? builder.greaterThanOrEqualTo(root
+                .get("exportPriceUSD"), minExportPriceUSD) : query.getGroupRestriction();
     }
 
     public static Specification<Product> activeTrue() {

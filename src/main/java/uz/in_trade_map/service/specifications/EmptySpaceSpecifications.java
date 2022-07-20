@@ -51,12 +51,12 @@ public class EmptySpaceSpecifications {
     }
 
     public static Specification<EmptySpace> findAllByLessStartingPrice(Float maxSPrice) {
-        return (root, query, builder) -> maxSPrice != null ? builder.greaterThanOrEqualTo(root
+        return (root, query, builder) -> maxSPrice != null ? builder.lessThanOrEqualTo(root
                 .get("startingPrice"), maxSPrice) : query.getGroupRestriction();
     }
 
     public static Specification<EmptySpace> findAllByGreaterAnnualPrice(Float minAPrice) {
-        return (root, query, builder) -> minAPrice != null ? builder.lessThanOrEqualTo(root
+        return (root, query, builder) -> minAPrice != null ? builder.greaterThanOrEqualTo(root
                 .get("annualPrice"), minAPrice) : query.getGroupRestriction();
     }
 

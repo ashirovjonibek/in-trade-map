@@ -35,13 +35,28 @@ public class ProductController {
             @RequestParam(required = false) Integer regionId,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer companyId,
+            @RequestParam(required = false) Float maxPriceUZS,
+            @RequestParam(required = false) Float minPriceUZS,
+            @RequestParam(required = false) Float minPriceUSD,
+            @RequestParam(required = false) Float maxPriceUSD,
+            @RequestParam(required = false) Float maxExportPriceUZS,
+            @RequestParam(required = false) Float minExportPriceUZS,
+            @RequestParam(required = false) Float minExportPriceUSD,
+            @RequestParam(required = false) Float maxExportPriceUSD,
             @RequestParam(required = false) Integer confirmStatus,
             @RequestParam(required = false) String brandName,
             @RequestParam(required = false, defaultValue = "20") int size,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false) String expand
     ) {
-        return productService.getAll(search, districtId, regionId, categoryId, companyId, brandName, confirmStatus, size, page, expand);
+        return productService.getAll(
+                search, districtId, regionId,
+                categoryId, companyId, brandName,
+                maxPriceUZS, minPriceUZS, minPriceUSD,
+                maxPriceUSD, maxExportPriceUZS, minExportPriceUZS,
+                minExportPriceUSD, maxExportPriceUSD, confirmStatus,
+                size, page, expand
+        );
     }
 
     @GetMapping("/{id}")
