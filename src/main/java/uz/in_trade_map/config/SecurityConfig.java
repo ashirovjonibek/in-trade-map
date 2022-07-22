@@ -78,7 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/empty-spaces/**",
                         "/api/user/**",
                         "/api/company/**",
-                        "/api/product/**"
+                        "/api/product/**",
+                        "/api/ref/**",
+                        "/ws/**"
                 )
                 .permitAll()
                 .antMatchers("/api/**")

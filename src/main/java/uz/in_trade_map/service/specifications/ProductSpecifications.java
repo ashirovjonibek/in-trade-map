@@ -113,6 +113,12 @@ public class ProductSpecifications {
                 .get("exportPriceUSD"), minExportPriceUSD) : query.getGroupRestriction();
     }
 
+    public static Specification<Product> companyActiveTrue() {
+        return (root, query, builder) -> builder.equal(root
+                .get("company")
+                .get("active"), true);
+    }
+
     public static Specification<Product> activeTrue() {
         return (root, query, builder) -> builder.equal(root
                 .get("active"), true);

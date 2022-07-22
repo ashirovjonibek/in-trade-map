@@ -152,6 +152,7 @@ public class ProductService extends Validator<ProductRequest> {
                             .and(findAllByLessExportPriceUZS(maxExportPriceUZS))
                             .and(findAllByGreaterExportPriceUSD(minExportPriceUSD))
                             .and(findAllByLessExportPriceUSD(maxExportPriceUSD))
+                            .and(companyActiveTrue())
                             .and(activeTrue()),
                     pageable
             );

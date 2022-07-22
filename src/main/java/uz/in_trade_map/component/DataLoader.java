@@ -91,6 +91,7 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("create_empty_space", "Create empty space"));
             permissions.add(new Permissions("update_empty_space", "Update empty space"));
             permissions.add(new Permissions("delete_empty_space", "Delete empty space"));
+            permissions.add(new Permissions("connect_app", "Connect chat"));
 
             List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
 
@@ -145,6 +146,7 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("create_empty_space", "Create empty space"));
             permissions.add(new Permissions("update_empty_space", "Update empty space"));
             permissions.add(new Permissions("delete_empty_space", "Delete empty space"));
+            permissions.add(new Permissions("connect_app", "Connect chat"));
 
             permissions.forEach(perm -> {
                 if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() == 0) {
