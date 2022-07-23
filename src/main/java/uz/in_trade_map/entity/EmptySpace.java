@@ -66,6 +66,10 @@ public class EmptySpace {
 
     private Float lng;
 
+    private Integer isStateProperty;
+
+    private Integer isBuild;
+
     @ManyToOne
     private District district;
 

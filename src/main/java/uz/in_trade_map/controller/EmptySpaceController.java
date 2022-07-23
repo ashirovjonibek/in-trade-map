@@ -42,9 +42,11 @@ public class EmptySpaceController {
             @RequestParam(required = false) Float minStartingPrice,
             @RequestParam(required = false) Float maxStartingPrice,
             @RequestParam(required = false) Float minAnnualPrice,
-            @RequestParam(required = false) Float maxAnnualPrice
+            @RequestParam(required = false) Float maxAnnualPrice,
+            @RequestParam(required = false) Integer isStateProperty,
+            @RequestParam(required = false) Integer isBuild
     ) {
-        return emptySpaceService.getAll(page, size, expand, regionId, districtId, address, search, minStartingPrice, maxStartingPrice, minAnnualPrice, maxAnnualPrice);
+        return emptySpaceService.getAll(page, size, expand, regionId, districtId, address, search, minStartingPrice, maxStartingPrice, minAnnualPrice, maxAnnualPrice,isStateProperty,isBuild);
     }
 
     @GetMapping("/{id}")

@@ -97,7 +97,8 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
             int page, int size, String expand, Integer regionId,
             Integer districtId, String address, String search,
             Float minStartingPrice, Float maxStartingPrice,
-            Float minAnnualPrice, Float maxAnnualPrice
+            Float minAnnualPrice, Float maxAnnualPrice,
+            Integer isStateProperty, Integer isBuild
     ) {
         try {
             Pageable pageable = PageRequest.of(page - 1, size);
@@ -112,6 +113,8 @@ public class EmptySpaceService extends Validator<EmptySpaceRequest> {
                             .and(findAllByLessStartingPrice(maxStartingPrice))
                             .and(findAllByGreaterAnnualPrice(minAnnualPrice))
                             .and(findAllByLessAnnualPrice(maxAnnualPrice))
+                            .and(findByIsBuildField(isBuild))
+                            .and(findByIsStatePropertyField(isStateProperty))
                             .and(activeTrue()),
                     pageable
             );

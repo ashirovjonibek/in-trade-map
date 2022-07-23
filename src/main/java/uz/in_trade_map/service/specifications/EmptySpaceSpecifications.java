@@ -65,6 +65,16 @@ public class EmptySpaceSpecifications {
                 .get("annualPrice"), maxAPrice) : query.getGroupRestriction();
     }
 
+    public static Specification<EmptySpace> findByIsStatePropertyField(Integer status) {
+        return (root, query, builder) -> status != null ? builder.lessThanOrEqualTo(root
+                .get("isStateProperty"), status) : query.getGroupRestriction();
+    }
+
+    public static Specification<EmptySpace> findByIsBuildField(Integer status) {
+        return (root, query, builder) -> status != null ? builder.lessThanOrEqualTo(root
+                .get("isBuild"), status) : query.getGroupRestriction();
+    }
+
     public static Specification<EmptySpace> activeTrue() {
         return (root, query, builder) -> builder.equal(root
                 .get("active"), true);

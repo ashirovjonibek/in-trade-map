@@ -53,6 +53,12 @@ public class EmptySpaceRequest {
 
     private Float annualPrice;
 
+    @NotNull
+    private Integer isStateProperty;
+
+    @NotNull
+    private Integer isBuild;
+
     @FieldTypeArray
     @FieldTypeFile(extension = ".png,.jpeg,.jpg", size = 3 * 1024 * 1024)
     private List<MultipartFile> photos;
@@ -73,6 +79,8 @@ public class EmptySpaceRequest {
                 .lng(request.getLng())
                 .startingPrice(request.getStartingPrice())
                 .annualPrice(request.getAnnualPrice())
+                .isBuild(request.getIsBuild())
+                .isStateProperty(request.getIsStateProperty())
                 .active(true)
                 .build();
     }
@@ -90,7 +98,8 @@ public class EmptySpaceRequest {
         emptySpace.setLng(request.getLng());
         emptySpace.setStartingPrice(request.getStartingPrice());
         emptySpace.setAnnualPrice(request.getAnnualPrice());
-        emptySpace.setActive(true);
+        emptySpace.setIsBuild(request.getIsBuild());
+        emptySpace.setIsStateProperty(request.getIsStateProperty());
         return emptySpace;
     }
 }

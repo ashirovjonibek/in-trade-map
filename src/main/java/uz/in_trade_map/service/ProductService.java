@@ -77,7 +77,7 @@ public class ProductService extends Validator<ProductRequest> {
             } else {
                 Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
                 if (optionalProduct.isPresent()) {
-                    Product product = ProductRequest.convertToProduct(request);
+                    Product product = ProductRequest.convertToProduct(request, optionalProduct.get());
                     product.setConfirmStatus(user().getCompany() == null ? 1 : user().getCompany() != null && user().getCompany().isProductAlwaysConfirm() ? 1 : 0);
                     List<Attachment> attachments = attachmentService.uploadFile(request.getPhotos());
                     if (request.getOldPhotoIds() != null && request.getOldPhotoIds().size() > 0) {

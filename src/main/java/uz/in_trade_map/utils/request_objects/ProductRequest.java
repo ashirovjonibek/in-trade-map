@@ -110,4 +110,27 @@ public class ProductRequest {
                 .active(true)
                 .build();
     }
+
+    public static Product convertToProduct(ProductRequest request, Product product) {
+        product.setDescriptionEn(request.getDescriptionEn());
+        product.setDescriptionRu(request.getDescriptionRu());
+        product.setDescriptionUz(request.getDescriptionUz());
+        product.setDescriptionUzCry(request.getDescriptionUzCry());
+        product.setShortDescriptionEn(request.getShortDescriptionEn());
+        product.setShortDescriptionRu(request.getShortDescriptionRu());
+        product.setShortDescriptionUz(request.getShortDescriptionUz());
+        product.setShortDescriptionUzCry(request.getShortDescriptionUzCry());
+        product.setNameEn(request.getNameEn());
+        product.setNameRu(request.getNameRu());
+        product.setNameUz(request.getNameUz());
+        product.setNameUzCry(request.getNameUzCry());
+        product.setPriceUSD(request.getPriceUSD());
+        product.setPriceUZS(request.getPriceUZS());
+        product.setExportPriceUSD(request.getExportPriceUSD());
+        product.setExportPriceUZS(request.getExportPriceUZS());
+        product.setMinWeight(request.getMinWeight());
+        product.setWeight(request.getWeight());
+        product.setMaterialType(request.getMaterialType());
+        return product;
+    }
 }
