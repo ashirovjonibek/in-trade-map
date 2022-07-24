@@ -174,6 +174,8 @@ public class DtoConverter {
         response.put("companyId", product.getCompany() != null ? product.getCompany().getId() : null);
         response.put("createdById", product.getCreatedBy() != null ? product.getCreatedBy().getId() : null);
         response.put("updatedById", product.getUpdatedBy() != null ? product.getUpdatedBy().getId() : null);
+        response.put("createAt", product.getCreatedAt());
+        response.put("updatedAt", product.getUpdatedAt());
         response.put("photos", product.getPhotos() != null
                 ? product.getPhotos().stream().map(Attachment::getId).collect(Collectors.toList())
                 : null);
