@@ -4,18 +4,30 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.in_trade_map.entity.Application;
+import uz.in_trade_map.utils.validator.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicationRequest {
+    @NotNull
     private String companyNameUz;
+
+    @NotNull
     private String companyNameUzCry;
+
+    @NotNull
     private String companyNameRu;
+
+    @NotNull
     private String companyNameEn;
+
+    @NotNull
     private String brandName;
+
+    @NotNull
     private String inn;
-    private String email;
+
     private String shortDescriptionUz;
     private String shortDescriptionUzCry;
     private String shortDescriptionRu;
@@ -24,12 +36,22 @@ public class ApplicationRequest {
     /**
      * Director data
      **/
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String lastName;
+
+    @NotNull
     private String middleName;
+
+    @NotNull
     private String bossPhone;
+
+    @NotNull
     private String bossEmail;
 
+    @NotNull
     private Integer checkPhoneId;
 
     public static Application convertToApplication(ApplicationRequest request) {
@@ -47,7 +69,6 @@ public class ApplicationRequest {
                 .companyNameRu(request.getCompanyNameRu())
                 .companyNameUz(request.getCompanyNameUz())
                 .companyNameUzCry(request.getCompanyNameUzCry())
-                .email(request.getEmail())
                 .inn(request.getInn())
                 .shortDescriptionEn(request.getShortDescriptionEn())
                 .shortDescriptionRu(request.getShortDescriptionRu())

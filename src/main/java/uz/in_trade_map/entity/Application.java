@@ -47,7 +47,6 @@ public class Application {
     private String companyNameEn;
     private String brandName;
     private String inn;
-    private String email;
     private String shortDescriptionUz;
     private String shortDescriptionUzCry;
     private String shortDescriptionRu;
@@ -61,4 +60,6 @@ public class Application {
     private String middleName;
     private String bossPhone;
     private String bossEmail;
+
+    private int isConfirm;
 }

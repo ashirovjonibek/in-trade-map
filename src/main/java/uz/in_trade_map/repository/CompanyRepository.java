@@ -6,6 +6,10 @@ import uz.in_trade_map.entity.Company;
 
 import java.util.Optional;
 
-public interface CompanyRepository extends JpaRepository<Company,Integer>, JpaSpecificationExecutor<Company> {
+public interface CompanyRepository extends JpaRepository<Company, Integer>, JpaSpecificationExecutor<Company> {
     Optional<Company> findByIdAndActiveTrue(Integer id);
+
+    boolean existsByBrandNameAndActiveTrue(String brandName);
+
+    boolean existsByInnAndActiveTrue(String inn);
 }
