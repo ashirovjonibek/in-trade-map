@@ -27,7 +27,8 @@ public class SmsService {
             String AUTH_TOKEN = "9292dd5331b7da4fb92c06b6101b77cf";
             String ACCOUNT_SID = "ACec33589aa758cf9b0622f5296b87b885";
             if (!phoneNumber.trim().startsWith("+")) {
-                phoneNumber = "+" + phoneNumber;
+                String s = phoneNumber.replaceAll(" ", "");
+                phoneNumber = "+" + s;
             }
             String shortCode = passwordActions.generateShortCode(6);
             String sms = "InTradeMap saytida raqamni tasdiqlash kodi: " + shortCode;
@@ -51,6 +52,27 @@ public class SmsService {
                 build.setCode(shortCode);
             }
             return checkPhoneRepository.save(build);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Error send sms code!");
+        }
+    }
+
+    public boolean sendSms(String phoneNumber,String text) {
+        try {
+            String AUTH_TOKEN = "9292dd5331b7da4fb92c06b6101b77cf";
+            String ACCOUNT_SID = "ACec33589aa758cf9b0622f5296b87b885";
+            if (!phoneNumber.trim().startsWith("+")) {
+                String s = phoneNumber.replaceAll(" ", "");
+                phoneNumber = "+" + s;
+            }
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+            Message message = Message.creator(
+                    new PhoneNumber(phoneNumber),
+                    new PhoneNumber("+13344542733"),
+                    text)
+                    .create();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Error send sms code!");

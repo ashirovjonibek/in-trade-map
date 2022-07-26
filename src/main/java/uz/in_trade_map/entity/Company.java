@@ -90,5 +90,19 @@ public class Company implements Serializable {
 
     private boolean productAlwaysConfirm = false;
 
-    private boolean blocked=false;
+    private boolean blocked = false;
+
+    public Company(Application application, boolean active) {
+        this.nameUz = application.getCompanyNameUz();
+        this.nameRu = application.getCompanyNameRu();
+        this.nameEn = application.getCompanyNameEn();
+        this.nameUzCry = application.getCompanyNameUzCry();
+        this.brandName = application.getBrandName();
+        this.shortDescriptionUz = application.getShortDescriptionUz();
+        this.shortDescriptionRu = application.getShortDescriptionRu();
+        this.shortDescriptionEn = application.getShortDescriptionEn();
+        this.shortDescriptionUzCry = application.getShortDescriptionUzCry();
+        this.inn = application.getInn();
+        this.active = active;
+    }
 }

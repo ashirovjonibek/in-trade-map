@@ -109,6 +109,43 @@ public class DtoConverter {
         return response;
     }
 
+    public static Map<String, Object> applicationDto(Application application, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> companyInfo = new HashMap<>();
+        Map<String, Object> userInfo = new HashMap<>();
+        response.put("id", application.getId());
+        companyInfo.put("companyNameUz", application.getCompanyNameUz());
+        companyInfo.put("companyNameRu", application.getCompanyNameRu());
+        companyInfo.put("companyNameEn", application.getCompanyNameEn());
+        companyInfo.put("companyNameUzCry", application.getCompanyNameUzCry());
+        companyInfo.put("brandName", application.getBrandName());
+        companyInfo.put("inn", application.getInn());
+        companyInfo.put("shortDescriptionUz", application.getShortDescriptionUz());
+        companyInfo.put("shortDescriptionRu", application.getShortDescriptionRu());
+        companyInfo.put("shortDescriptionEn", application.getShortDescriptionEn());
+        companyInfo.put("shortDescriptionUzCry", application.getShortDescriptionUzCry());
+        companyInfo.put("createdById", application.getCreatedBy() != null ? application.getCreatedBy().getId() : null);
+        companyInfo.put("createdAt", application.getCreatedAt());
+        companyInfo.put("updatedById", application.getUpdatedBy() != null ? application.getUpdatedBy().getId() : null);
+        companyInfo.put("updatedAt", application.getUpdatedAt());
+        userInfo.put("firstName", application.getFirstName());
+        userInfo.put("lastName", application.getLastName());
+        userInfo.put("middleName", application.getMiddleName());
+        userInfo.put("phone", application.getBossPhone());
+        userInfo.put("email", application.getBossPhone());
+        response.put("userInfo", userInfo);
+        response.put("companyInfo", companyInfo);
+        if (expand != null) {
+            if (expand.contains("createdBy") && application.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(application.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && application.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(application.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
+
     public static Map<String, Object> emptySpacesDto(EmptySpace emptySpace, String expand) {
         Map<String, Object> response = new HashMap<>();
         response.put("id", emptySpace.getId());

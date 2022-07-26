@@ -92,6 +92,19 @@ public class User implements UserDetails, Serializable {
         this.roles = roles;
     }
 
+    public User(boolean active, String username, String password, Company company, Set<Role> roles, Application application) {
+        this.active = active;
+        this.firstName = application.getFirstName();
+        this.lastName = application.getLastName();
+        this.middleName = application.getMiddleName();
+        this.phoneNumber = application.getBossPhone();
+        this.username = username;
+        this.password = password;
+        this.email = application.getBossEmail();
+        this.company = company;
+        this.roles = roles;
+    }
+
     private Collection<SimpleGrantedAuthority> getPermissions() {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         roles.forEach(role -> {

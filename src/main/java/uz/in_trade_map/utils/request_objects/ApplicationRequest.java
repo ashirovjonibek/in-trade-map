@@ -10,16 +10,13 @@ import uz.in_trade_map.utils.validator.annotations.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicationRequest {
-    @NotNull
+
     private String companyNameUz;
 
-    @NotNull
     private String companyNameUzCry;
 
-    @NotNull
     private String companyNameRu;
 
-    @NotNull
     private String companyNameEn;
 
     @NotNull
