@@ -24,8 +24,8 @@ public class SmsService {
             if (id != null) {
                 optionalCheckPhone = checkPhoneRepository.findById(id);
             }
-            String AUTH_TOKEN = "9292dd5331b7da4fb92c06b6101b77cf";
-            String ACCOUNT_SID = "ACec33589aa758cf9b0622f5296b87b885";
+            String AUTH_TOKEN = "9cdb209fdfedcbacfedffe46b49101e1";
+            String ACCOUNT_SID = "ACae85175fc0c40f588dc33021eb0de2fc";
             if (!phoneNumber.trim().startsWith("+")) {
                 String s = phoneNumber.replaceAll(" ", "");
                 phoneNumber = "+" + s;
@@ -35,7 +35,7 @@ public class SmsService {
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
             Message message = Message.creator(
                     new PhoneNumber(phoneNumber),
-                    new PhoneNumber("+13344542733"),
+                    new PhoneNumber("+16072988907"),
                     sms)
                     .create();
             Timestamp created = new Timestamp(new Date(new java.util.Date().getTime()).getTime());
@@ -60,8 +60,8 @@ public class SmsService {
 
     public boolean sendSms(String phoneNumber,String text) {
         try {
-            String AUTH_TOKEN = "9292dd5331b7da4fb92c06b6101b77cf";
-            String ACCOUNT_SID = "ACec33589aa758cf9b0622f5296b87b885";
+            String AUTH_TOKEN = "9cdb209fdfedcbacfedffe46b49101e1";
+            String ACCOUNT_SID = "ACae85175fc0c40f588dc33021eb0de2fc";
             if (!phoneNumber.trim().startsWith("+")) {
                 String s = phoneNumber.replaceAll(" ", "");
                 phoneNumber = "+" + s;
@@ -69,7 +69,7 @@ public class SmsService {
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
             Message message = Message.creator(
                     new PhoneNumber(phoneNumber),
-                    new PhoneNumber("+13344542733"),
+                    new PhoneNumber("+16072988907"),
                     text)
                     .create();
             return true;
