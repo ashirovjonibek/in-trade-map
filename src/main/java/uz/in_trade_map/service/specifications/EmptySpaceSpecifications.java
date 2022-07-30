@@ -66,12 +66,12 @@ public class EmptySpaceSpecifications {
     }
 
     public static Specification<EmptySpace> findByIsStatePropertyField(Integer status) {
-        return (root, query, builder) -> status != null ? builder.lessThanOrEqualTo(root
+        return (root, query, builder) -> status != null ? builder.equal(root
                 .get("isStateProperty"), status) : query.getGroupRestriction();
     }
 
     public static Specification<EmptySpace> findByIsBuildField(Integer status) {
-        return (root, query, builder) -> status != null ? builder.lessThanOrEqualTo(root
+        return (root, query, builder) -> status != null ? builder.equal(root
                 .get("isBuild"), status) : query.getGroupRestriction();
     }
 
