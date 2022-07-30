@@ -160,6 +160,8 @@ public class DtoConverter {
         response.put("annualPrice", emptySpace.getAnnualPrice());
         response.put("address", emptySpace.getAddress());
         response.put("lat", emptySpace.getLat());
+        response.put("isBuild", emptySpace.getIsBuild());
+        response.put("isStateProperty", emptySpace.getIsStateProperty());
         response.put("lng", emptySpace.getLng());
         response.put("districtId", emptySpace.getDistrict() != null ? emptySpace.getDistrict().getId() : null);
         response.put("createdById", emptySpace.getCreatedBy() != null ? emptySpace.getCreatedBy().getId() : null);
