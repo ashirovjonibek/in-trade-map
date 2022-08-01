@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import uz.in_trade_map.entity.*;
+import uz.in_trade_map.entity.enums.ChatType;
 import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.repository.*;
 
@@ -57,6 +58,9 @@ public class DataLoader implements CommandLineRunner {
 
     @Autowired
     PermissionsRepository permissionsRepository;
+
+    @Autowired
+    ChatRepository chatRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -105,14 +109,32 @@ public class DataLoader implements CommandLineRunner {
             roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", null, RoleName.ROLE_WRITER.name()));
             Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", permissions, RoleName.ROLE_ADMIN.name()));
             roleRepository.saveAll(roles);
-            userRepository.save(new User(
+            List<User> users=new ArrayList<>();
+            users.add(new User(
                     "Admin",
                     "Admin",
-                    "+998912345678",
+                    "+998912345677",
                     "admin123",
-                    passwordEncoder.encode("admin123"),
+                    passwordEncoder.encode("admin123321"),
                     Collections.singleton(admin)
             ));
+            users.add(new User(
+                    "Ahror",
+                    "Sulaymonov",
+                    "+998912345678",
+                    "ahror123",
+                    passwordEncoder.encode("ahror123"),
+                    Collections.singleton(admin)
+            ));
+            users.add(new User(
+                    "G'ulomjon",
+                    "Bakirov",
+                    "+998912345679",
+                    "gulomjon123",
+                    passwordEncoder.encode("gulomjon123"),
+                    Collections.singleton(admin)
+            ));
+            userRepository.saveAll(users);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readValue(region.getURL(), JsonNode.class);
             List<Region> regions = new ArrayList<>();
@@ -169,6 +191,7 @@ public class DataLoader implements CommandLineRunner {
                 roleRepository.save(role);
             }
         }
+
     }
 
 

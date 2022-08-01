@@ -1,6 +1,8 @@
 package uz.in_trade_map.config;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +28,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     AuthService authService;
+
+    @Value("${chat.server.host}")
+    private String host;
+
+    @Value("${chat.server.port}")
+    private Integer port;
+
+    @Bean
+    public SocketIOServer socketIOServer() {
+        com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
+        config.setHostname(host);
+        config.setPort(port);
+        return new SocketIOServer(config);
+    }
 
     @Bean
     @Override
@@ -70,8 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/user/**",
                         "/api/company/**",
                         "/api/product/**",
-                        "/api/application/**",
-                        "/ws/**"
+                        "/api/application/**"
                 )
                 .permitAll()
                 .antMatchers("/api/**")
