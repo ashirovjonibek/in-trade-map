@@ -24,13 +24,13 @@ public class UserRequest {
 
     private String middleName;
 
-    @NotNull(minLength = 13,maxLength = 13)
+    @NotNull(minLength = 13, maxLength = 13)
     private String phoneNumber;
 
-    @NotNull(minLength = 8,maxLength = 30)
+    @NotNull(minLength = 8, maxLength = 30)
     private String username;
 
-//    @NotNull(minLength = 8,maxLength = 30)
+    //    @NotNull(minLength = 8,maxLength = 30)
     private String password;
 
     @NotNull
@@ -66,7 +66,21 @@ public class UserRequest {
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .username(request.getUsername())
+                .accountNonBlocked(true)
+                .accountNonExpired(true)
+                .credentialNonExpired(true)
+                .enabled(true)
                 .active(true)
                 .build();
+    }
+
+    public static User convertToUser(UserRequest request, User user) {
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setMiddleName(request.getMiddleName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername());
+        return user;
     }
 }
