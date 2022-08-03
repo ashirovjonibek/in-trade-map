@@ -83,13 +83,18 @@ public class User implements UserDetails, Serializable {
     private boolean credentialNonExpired = true;
     private boolean enabled = true;
 
-    public User(String firstName, String lastName, String phoneNumber, String username, String password, Set<Role> roles) {
+    public User(String firstName, String lastName, String phoneNumber, String username, String password, Set<Role> roles,boolean accountNonBlocked,boolean active, boolean accountNonExpired,boolean credentialNonExpired, boolean enabled) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.accountNonBlocked=accountNonBlocked;
+        this.accountNonExpired=accountNonExpired;
+        this.credentialNonExpired=credentialNonExpired;
+        this.enabled=enabled;
+        this.active=active;
     }
 
     public User(boolean active, String username, String password, Company company, Set<Role> roles, Application application) {

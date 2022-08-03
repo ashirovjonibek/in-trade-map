@@ -109,14 +109,19 @@ public class DataLoader implements CommandLineRunner {
             roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", null, RoleName.ROLE_WRITER.name()));
             Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", permissions, RoleName.ROLE_ADMIN.name()));
             roleRepository.saveAll(roles);
-            List<User> users=new ArrayList<>();
+            List<User> users = new ArrayList<>();
             users.add(new User(
                     "Admin",
                     "Admin",
                     "+998912345677",
                     "admin123",
                     passwordEncoder.encode("admin123321"),
-                    Collections.singleton(admin)
+                    Collections.singleton(admin),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
             ));
             users.add(new User(
                     "Ahror",
@@ -124,7 +129,12 @@ public class DataLoader implements CommandLineRunner {
                     "+998912345678",
                     "ahror123",
                     passwordEncoder.encode("ahror123"),
-                    Collections.singleton(admin)
+                    Collections.singleton(admin),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
             ));
             users.add(new User(
                     "G'ulomjon",
@@ -132,7 +142,12 @@ public class DataLoader implements CommandLineRunner {
                     "+998912345679",
                     "gulomjon123",
                     passwordEncoder.encode("gulomjon123"),
-                    Collections.singleton(admin)
+                    Collections.singleton(admin),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
             ));
             userRepository.saveAll(users);
             ObjectMapper objectMapper = new ObjectMapper();
