@@ -167,7 +167,7 @@ public class UserService extends Validator<UserRequest> {
                 } else {
                     UserPasswords userPasswords = new UserPasswords();
                     op.ifPresent(passwords -> userPasswords.setId(passwords.getId()));
-                    User convertToUser = UserRequest.convertToUser(request);
+                    User convertToUser = UserRequest.convertToUser(request, optionalUser.get());
                     if (request.getImage() != null) {
                         convertToUser.setImage(attachmentService.uploadFile(request.getImage()));
                     } else {

@@ -47,7 +47,7 @@ public class AuthService implements UserDetailsService {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User principal = (User) authentication.getPrincipal();
-            if (principal.getCompany()!=null&&!principal.getCompany().isActive()){
+            if (principal.getCompany() != null && !principal.getCompany().isActive()) {
                 throw new IllegalStateException("Your company is blocked!");
             }
             String jwt = jwtTokenProvider.generateToken(principal);
