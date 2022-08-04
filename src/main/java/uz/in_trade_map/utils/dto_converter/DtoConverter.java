@@ -95,8 +95,8 @@ public class DtoConverter {
                 String s = null;
                 if (expand.contains("contactData.location.district")) s = "district";
                 Map<String, Object> contactData = new HashMap<>();
-                contactData.put("socialMedia", company.getData().getSocialMedia());
-                contactData.put("location", DtoConverter.locationDto(company.getData().getLocation(), s));
+                contactData.put("socialMedia", company.getData() != null ? company.getData().getSocialMedia() : null);
+                contactData.put("location", company.getData() != null ? DtoConverter.locationDto(company.getData().getLocation(), s) : null);
                 response.put("contactData", contactData);
             }
             if (expand.contains("createdBy") && company.getCreatedBy() != null) {
