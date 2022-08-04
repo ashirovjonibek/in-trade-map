@@ -22,11 +22,10 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Entity(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails {
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     @GeneratedValue(generator = "uuid2")
@@ -78,23 +77,30 @@ public class User implements UserDetails, Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    private boolean accountNonBlocked = true;
-    private boolean accountNonExpired = true;
-    private boolean credentialNonExpired = true;
-    private boolean enabled = true;
+    private boolean accountNonBlocked;
+    private boolean accountNonExpired;
+    private boolean credentialNonExpired;
+    private boolean enabled;
 
-    public User(String firstName, String lastName, String phoneNumber, String username, String password, Set<Role> roles,boolean accountNonBlocked,boolean active, boolean accountNonExpired,boolean credentialNonExpired, boolean enabled) {
+    public User() {
+        this.accountNonBlocked = true;
+        this.accountNonExpired = true;
+        this.credentialNonExpired = true;
+        this.enabled = true;
+    }
+
+    public User(String firstName, String lastName, String phoneNumber, String username, String password, Set<Role> roles, boolean accountNonBlocked, boolean active, boolean accountNonExpired, boolean credentialNonExpired, boolean enabled) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
         this.roles = roles;
-        this.accountNonBlocked=accountNonBlocked;
-        this.accountNonExpired=accountNonExpired;
-        this.credentialNonExpired=credentialNonExpired;
-        this.enabled=enabled;
-        this.active=active;
+        this.accountNonBlocked = accountNonBlocked;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialNonExpired = credentialNonExpired;
+        this.enabled = enabled;
+        this.active = active;
     }
 
     public User(boolean active, String username, String password, Company company, Set<Role> roles, Application application) {
@@ -108,6 +114,11 @@ public class User implements UserDetails, Serializable {
         this.email = application.getBossEmail();
         this.company = company;
         this.roles = roles;
+        this.accountNonBlocked = true;
+        this.accountNonExpired = true;
+        this.credentialNonExpired = true;
+        this.enabled = true;
+        this.active = true;
     }
 
     private Collection<SimpleGrantedAuthority> getPermissions() {

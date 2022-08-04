@@ -2,6 +2,7 @@ package uz.in_trade_map.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import uz.in_trade_map.entity.User;
 
 import java.util.List;
@@ -20,4 +21,5 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     boolean existsByEmail(String email);
 
     List<User> findAllByCompanyIdAndActiveTrue(Integer id);
+
 }
