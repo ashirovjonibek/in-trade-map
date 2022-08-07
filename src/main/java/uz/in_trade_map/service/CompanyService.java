@@ -113,13 +113,11 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> getAll(
-            String search,
             Integer locationId,
             String inn,
             String brandName,
             Integer regionId,
             Integer districtId,
-            Integer quarterId,
             String expand,
             String address,
             int size,
@@ -129,12 +127,8 @@ public class CompanyService {
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Company> companies = companyRepository.findAll(
                     where(
-                            findByNameUz(search))
-                            .or(findByNameRu(search))
-                            .or(findByNameEn(search))
-                            .or(findByNameUzCry(search))
+                            findByBrandName(brandName))
                             .and(findByAddress(address))
-                            .and(findByBrandName(brandName))
                             .and(findByLocationId(locationId))
                             .and(findByInn(inn))
                             .and(findByRegionId(regionId))

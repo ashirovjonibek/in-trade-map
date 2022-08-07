@@ -118,7 +118,6 @@ public class User implements UserDetails {
         this.accountNonExpired = true;
         this.credentialNonExpired = true;
         this.enabled = true;
-        this.active = true;
     }
 
     private Collection<SimpleGrantedAuthority> getPermissions() {

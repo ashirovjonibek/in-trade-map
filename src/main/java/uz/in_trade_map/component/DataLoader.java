@@ -193,6 +193,7 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("get_one_application", "Get one application"));
             permissions.add(new Permissions("delete_application", "Delete application"));
 
+
             permissions.forEach(perm -> {
                 if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() == 0) {
                     Permissions save = permissionsRepository.save(perm);

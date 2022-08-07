@@ -14,14 +14,6 @@ import uz.in_trade_map.utils.validator.annotations.NotNull;
 @NoArgsConstructor
 public class CompanyRequest {
 
-    private String nameUz;
-
-    private String nameRu;
-
-    private String nameEn;
-
-    private String nameUzCry;
-
     @NotNull
     private String brandName;
 
@@ -71,10 +63,6 @@ public class CompanyRequest {
     public static Company convertCompany(CompanyRequest request) {
         return Company.builder()
                 .brandName(request.getBrandName())
-                .nameUz(request.getNameUz())
-                .nameRu(request.getNameRu())
-                .nameEn(request.getNameEn())
-                .nameUzCry(request.getNameUzCry())
                 .descriptionEn(request.getDescriptionEn())
                 .descriptionRu(request.getDescriptionRu())
                 .descriptionUz(request.getDescriptionUz())

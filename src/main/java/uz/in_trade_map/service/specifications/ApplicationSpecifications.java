@@ -47,26 +47,26 @@ public class ApplicationSpecifications {
         return (root, query, builder) -> brandName != null ? builder.like(root
                 .get("brandName"), "%" + brandName + "%") : query.getGroupRestriction();
     }
-
-    public static Specification<Application> findByNameUz(String companyNameUz) {
-        return (root, query, builder) -> companyNameUz != null ? builder.like(root
-                .get("companyNameUz"), "%" + companyNameUz + "%") : query.getGroupRestriction();
-    }
-
-    public static Specification<Application> findByNameRu(String companyNameRu) {
-        return (root, query, builder) -> companyNameRu != null ? builder.like(root
-                .get("companyNameRu"), "%" + companyNameRu + "%") : query.getGroupRestriction();
-    }
-
-    public static Specification<Application> findByNameEn(String companyNameEn) {
-        return (root, query, builder) -> companyNameEn != null ? builder.like(root
-                .get("companyNameEn"), "%" + companyNameEn + "%") : query.getGroupRestriction();
-    }
-
-    public static Specification<Application> findByNameUzCry(String companyNameUzCry) {
-        return (root, query, builder) -> companyNameUzCry != null ? builder.like(root
-                .get("companyNameUzCry"), "%" + companyNameUzCry + "%") : query.getGroupRestriction();
-    }
+//
+//    public static Specification<Application> findByNameUz(String companyNameUz) {
+//        return (root, query, builder) -> companyNameUz != null ? builder.like(root
+//                .get("companyNameUz"), "%" + companyNameUz + "%") : query.getGroupRestriction();
+//    }
+//
+//    public static Specification<Application> findByNameRu(String companyNameRu) {
+//        return (root, query, builder) -> companyNameRu != null ? builder.like(root
+//                .get("companyNameRu"), "%" + companyNameRu + "%") : query.getGroupRestriction();
+//    }
+//
+//    public static Specification<Application> findByNameEn(String companyNameEn) {
+//        return (root, query, builder) -> companyNameEn != null ? builder.like(root
+//                .get("companyNameEn"), "%" + companyNameEn + "%") : query.getGroupRestriction();
+//    }
+//
+//    public static Specification<Application> findByNameUzCry(String companyNameUzCry) {
+//        return (root, query, builder) -> companyNameUzCry != null ? builder.like(root
+//                .get("companyNameUzCry"), "%" + companyNameUzCry + "%") : query.getGroupRestriction();
+//    }
 
     public static Specification<Application> activeTrue() {
         return (root, query, builder) -> builder.equal(root

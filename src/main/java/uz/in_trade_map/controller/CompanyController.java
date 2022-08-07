@@ -65,26 +65,22 @@ public class CompanyController extends Validator<CompanyRequest> {
 
     @GetMapping
     public HttpEntity<?> getAll(
-            @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer locationId,
             @RequestParam(required = false) String inn,
             @RequestParam(required = false) String brandName,
             @RequestParam(required = false) Integer regionId,
             @RequestParam(required = false) Integer districtId,
-            @RequestParam(required = false) Integer quarterId,
             @RequestParam(required = false) String expand,
             @RequestParam(required = false) String address,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "20") int size
     ) {
         return companyService.getAll(
-                search,
                 locationId,
                 inn,
                 brandName,
                 regionId,
                 districtId,
-                quarterId,
                 expand,
                 address,
                 size,
@@ -97,7 +93,7 @@ public class CompanyController extends Validator<CompanyRequest> {
         return companyService.getOne(id, expand);
     }
 
-    @PostMapping(value = "/status/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/status/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public HttpEntity<?> changeStatus(@PathVariable Integer id, @RequestParam Integer status) {
         return companyService.setConfirmStatus(id, status);
     }

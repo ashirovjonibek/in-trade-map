@@ -42,10 +42,6 @@ public class Application implements Serializable {
 
     private boolean active = true;
 
-    private String companyNameUz;
-    private String companyNameUzCry;
-    private String companyNameRu;
-    private String companyNameEn;
     private String brandName;
     private String inn;
     private String shortDescriptionUz;
