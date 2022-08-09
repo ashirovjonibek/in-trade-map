@@ -51,13 +51,13 @@ public class ApplicationRequest {
                 .active(true)
                 /* Boss */
                 .bossEmail(request.getBossEmail())
-                .companyName(request.getCompanyName())
                 .bossPhone(request.getBossPhone())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .middleName(request.getMiddleName())
                 .brandName(request.getBrandName())
                 /* Company */
+                .companyName(request.getCompanyName())
                 .inn(request.getInn())
                 .shortDescriptionEn(request.getShortDescriptionEn())
                 .shortDescriptionRu(request.getShortDescriptionRu())

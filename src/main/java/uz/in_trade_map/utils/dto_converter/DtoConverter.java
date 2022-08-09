@@ -70,6 +70,7 @@ public class DtoConverter {
         response.put("id", company.getId());
         response.put("brandName", company.getBrandName());
         response.put("inn", company.getInn());
+        response.put("name", company.getName());
         response.put("shortDescriptionUz", company.getShortDescriptionUz());
         response.put("shortDescriptionRu", company.getShortDescriptionRu());
         response.put("shortDescriptionEn", company.getShortDescriptionEn());
@@ -113,6 +114,7 @@ public class DtoConverter {
         response.put("isConfirm", application.getIsConfirm());
         companyInfo.put("brandName", application.getBrandName());
         companyInfo.put("inn", application.getInn());
+        companyInfo.put("name", application.getCompanyName());
         companyInfo.put("shortDescriptionUz", application.getShortDescriptionUz());
         companyInfo.put("shortDescriptionRu", application.getShortDescriptionRu());
         companyInfo.put("shortDescriptionEn", application.getShortDescriptionEn());
