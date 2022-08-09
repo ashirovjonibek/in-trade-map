@@ -66,6 +66,7 @@ public class CompanyController extends Validator<CompanyRequest> {
     @GetMapping
     public HttpEntity<?> getAll(
             @RequestParam(required = false) Integer locationId,
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) String inn,
             @RequestParam(required = false) String brandName,
             @RequestParam(required = false) Integer regionId,
@@ -76,6 +77,7 @@ public class CompanyController extends Validator<CompanyRequest> {
             @RequestParam(required = false, defaultValue = "20") int size
     ) {
         return companyService.getAll(
+                search,
                 locationId,
                 inn,
                 brandName,
