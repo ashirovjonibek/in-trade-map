@@ -41,4 +41,14 @@ public class RoleRequest {
                 .active(true)
                 .build();
     }
+
+    public static Role convertToRole(RoleRequest request, Role role) {
+        role.setNameUz(request.getNameUz());
+        role.setNameRu(request.getNameRu());
+        role.setNameEn(request.getNameEn());
+        role.setNameUzCry(request.getNameUzCry());
+        role.setRoleName(request.getRoleName());
+        role.setActive(true);
+        return role;
+    }
 }

@@ -17,6 +17,9 @@ public class ApplicationRequest {
     @NotNull
     private String inn;
 
+    @NotNull
+    private String companyName;
+
     private String shortDescriptionUz;
     private String shortDescriptionUzCry;
     private String shortDescriptionRu;
@@ -48,6 +51,7 @@ public class ApplicationRequest {
                 .active(true)
                 /* Boss */
                 .bossEmail(request.getBossEmail())
+                .companyName(request.getCompanyName())
                 .bossPhone(request.getBossPhone())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())

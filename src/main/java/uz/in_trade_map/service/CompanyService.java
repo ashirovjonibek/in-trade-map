@@ -63,7 +63,7 @@ public class CompanyService {
                 if (byId.isPresent()) {
                     Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
                     ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
-                    Company company = CompanyRequest.convertCompany(request);
+                    Company company = CompanyRequest.convertCompany(request, companyOptional.get());
                     if (request.getLogo() != null) {
                         company.setLogo(attachmentService.uploadFile(request.getLogo()));
                     } else {
@@ -113,6 +113,7 @@ public class CompanyService {
     }
 
     public ResponseEntity<?> getAll(
+            String search,
             Integer locationId,
             String inn,
             String brandName,
@@ -128,6 +129,7 @@ public class CompanyService {
             Page<Company> companies = companyRepository.findAll(
                     where(
                             findByBrandName(brandName))
+                            .and(findByName(search))
                             .and(findByAddress(address))
                             .and(findByLocationId(locationId))
                             .and(findByInn(inn))

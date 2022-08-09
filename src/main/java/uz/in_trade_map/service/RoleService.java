@@ -67,7 +67,7 @@ public class RoleService extends Validator<RoleRequest> {
                     if (valid.size() > 0) {
                         return AllApiResponse.response(422, 0, "Validator errors", valid);
                     } else {
-                        Role role = RoleRequest.convertToRole(request);
+                        Role role = RoleRequest.convertToRole(request, optionalRole.get());
                         List<Permissions> allById = permissionsRepository.findAllByNameIn(new HashSet<>(request.getPermissions()));
                         role.setPermissions(allById);
                         role.setId(optionalRole.get().getId());

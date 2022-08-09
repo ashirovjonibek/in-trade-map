@@ -43,6 +43,8 @@ public class Company implements Serializable {
     @Column(unique = true)
     private String brandName;
 
+    private String name;
+
     @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionUz;
 
@@ -88,6 +90,7 @@ public class Company implements Serializable {
 
     public Company(Application application, boolean active) {
         this.brandName = application.getBrandName();
+        this.name=application.getCompanyName();
         this.shortDescriptionUz = application.getShortDescriptionUz();
         this.shortDescriptionRu = application.getShortDescriptionRu();
         this.shortDescriptionEn = application.getShortDescriptionEn();
