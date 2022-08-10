@@ -67,14 +67,14 @@ public class CompanyService {
                     if (request.getLogo() != null) {
                         company.setLogo(attachmentService.uploadFile(request.getLogo()));
                     } else {
-                        if (oldLogo == 1) {
+                        if (oldLogo != null && oldLogo == 1) {
                             company.setLogo(companyOptional.get().getLogo());
                         } else company.setLogo(null);
                     }
                     if (request.getImage() != null) {
                         company.setImage(attachmentService.uploadFile(request.getImage()));
                     } else {
-                        if (oldImage == 1) {
+                        if (oldImage != null && oldImage == 1) {
                             company.setImage(companyOptional.get().getImage());
                         } else company.setImage(null);
                     }
