@@ -54,10 +54,12 @@ public class CompanyController extends Validator<CompanyRequest> {
         if (valid.size() > 0) {
             return AllApiResponse.response(422, 0, "Validator errors!", valid);
         } else {
-            String[] split = oldPhotoIds.split(",");
-            UUID[] uuids = new UUID[split.length];
-            for (int i = 0; i < split.length; i++) {
-                uuids[i] = UUID.fromString(split[i]);
+            String[] split = oldPhotoIds != null && !oldPhotoIds.isEmpty() ? oldPhotoIds.split(",") : null;
+            UUID[] uuids = new UUID[split != null ? split.length : 0];
+            if (split != null) {
+                for (int i = 0; i < split.length; i++) {
+                    uuids[i] = UUID.fromString(split[i]);
+                }
             }
             return companyService.edit(id, request, uuids, oldImage, oldLogo);
         }
