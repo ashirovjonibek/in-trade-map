@@ -21,6 +21,7 @@ import uz.in_trade_map.utils.request_objects.ProductRequest;
 import uz.in_trade_map.utils.validator.Validator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static uz.in_trade_map.service.specifications.ProductSpecifications.*;
 import static org.springframework.data.jpa.domain.Specification.*;
@@ -133,9 +134,15 @@ public class ProductService extends Validator<ProductRequest> {
             if (user == null) {
                 confirmStatus = 1;
             }
+            List<Integer> allChildIds = null;
+            if (categoryId != null) {
+                List<Category> categoryList = categoryRepository.findAllByCategoryIdAndActiveTrue(categoryId);
+                allChildIds = categoryList.size() > 0 ? categoryList.stream().map(Category::getId).collect(Collectors.toList()) : new ArrayList<>();
+                allChildIds.add(categoryId);
+            }
             Page<Product> products = productRepository.findAll(where(
                     findByCompanyId(user() != null && user().getCompany() != null ? user().getCompany().getId() : companyId))
-                            .and(findByCategoryId(categoryId))
+                            .and(findByCategoryId(allChildIds))
                             .and(findByDistrictId(districtId))
                             .and(findByRegionId(regionId))
                             .and(findByBrandName(brandName))

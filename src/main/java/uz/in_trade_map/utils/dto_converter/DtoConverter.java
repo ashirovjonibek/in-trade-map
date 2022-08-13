@@ -68,12 +68,9 @@ public class DtoConverter {
     public static Map<String, Object> companyDto(Company company, String expand) {
         Map<String, Object> response = new HashMap<>();
         response.put("id", company.getId());
-        response.put("nameUz", company.getNameUz());
-        response.put("nameRu", company.getNameRu());
-        response.put("nameEn", company.getNameEn());
-        response.put("nameUzCry", company.getNameUzCry());
         response.put("brandName", company.getBrandName());
         response.put("inn", company.getInn());
+        response.put("name", company.getName());
         response.put("shortDescriptionUz", company.getShortDescriptionUz());
         response.put("shortDescriptionRu", company.getShortDescriptionRu());
         response.put("shortDescriptionEn", company.getShortDescriptionEn());
@@ -95,8 +92,8 @@ public class DtoConverter {
                 String s = null;
                 if (expand.contains("contactData.location.district")) s = "district";
                 Map<String, Object> contactData = new HashMap<>();
-                contactData.put("socialMedia", company.getData().getSocialMedia());
-                contactData.put("location", DtoConverter.locationDto(company.getData().getLocation(), s));
+                contactData.put("socialMedia", company.getData() != null ? company.getData().getSocialMedia() : null);
+                contactData.put("location", company.getData() != null ? DtoConverter.locationDto(company.getData().getLocation(), s) : null);
                 response.put("contactData", contactData);
             }
             if (expand.contains("createdBy") && company.getCreatedBy() != null) {
@@ -114,12 +111,10 @@ public class DtoConverter {
         Map<String, Object> companyInfo = new HashMap<>();
         Map<String, Object> userInfo = new HashMap<>();
         response.put("id", application.getId());
-        companyInfo.put("companyNameUz", application.getCompanyNameUz());
-        companyInfo.put("companyNameRu", application.getCompanyNameRu());
-        companyInfo.put("companyNameEn", application.getCompanyNameEn());
-        companyInfo.put("companyNameUzCry", application.getCompanyNameUzCry());
+        response.put("isConfirm", application.getIsConfirm());
         companyInfo.put("brandName", application.getBrandName());
         companyInfo.put("inn", application.getInn());
+        companyInfo.put("name", application.getCompanyName());
         companyInfo.put("shortDescriptionUz", application.getShortDescriptionUz());
         companyInfo.put("shortDescriptionRu", application.getShortDescriptionRu());
         companyInfo.put("shortDescriptionEn", application.getShortDescriptionEn());
@@ -132,7 +127,7 @@ public class DtoConverter {
         userInfo.put("lastName", application.getLastName());
         userInfo.put("middleName", application.getMiddleName());
         userInfo.put("phone", application.getBossPhone());
-        userInfo.put("email", application.getBossPhone());
+        userInfo.put("email", application.getBossEmail());
         response.put("userInfo", userInfo);
         response.put("companyInfo", companyInfo);
         if (expand != null) {

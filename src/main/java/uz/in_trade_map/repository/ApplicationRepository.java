@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Integer>, JpaSpecificationExecutor<Application> {
     Optional<Application> findByIdAndActiveTrue(Integer id);
+
+    Optional<Application> findByIdAndActiveTrueAndIsConfirm(Integer id, Integer status);
 }

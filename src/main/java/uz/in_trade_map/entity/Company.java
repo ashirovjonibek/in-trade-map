@@ -40,15 +40,10 @@ public class Company implements Serializable {
 
     private boolean active = true;
 
-    private String nameUz;
-
-    private String nameRu;
-
-    private String nameEn;
-
-    private String nameUzCry;
-
+    @Column(unique = true)
     private String brandName;
+
+    private String name;
 
     @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionUz;
@@ -74,6 +69,7 @@ public class Company implements Serializable {
     @Column(columnDefinition = "text")
     private String descriptionUzCry;
 
+    @Column(unique = true)
     private String inn;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -93,11 +89,8 @@ public class Company implements Serializable {
     private boolean blocked = false;
 
     public Company(Application application, boolean active) {
-        this.nameUz = application.getCompanyNameUz();
-        this.nameRu = application.getCompanyNameRu();
-        this.nameEn = application.getCompanyNameEn();
-        this.nameUzCry = application.getCompanyNameUzCry();
         this.brandName = application.getBrandName();
+        this.name=application.getCompanyName();
         this.shortDescriptionUz = application.getShortDescriptionUz();
         this.shortDescriptionRu = application.getShortDescriptionRu();
         this.shortDescriptionEn = application.getShortDescriptionEn();

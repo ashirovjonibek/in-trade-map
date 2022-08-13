@@ -11,19 +11,14 @@ import uz.in_trade_map.utils.validator.annotations.NotNull;
 @NoArgsConstructor
 public class ApplicationRequest {
 
-    private String companyNameUz;
-
-    private String companyNameUzCry;
-
-    private String companyNameRu;
-
-    private String companyNameEn;
-
     @NotNull
     private String brandName;
 
     @NotNull
     private String inn;
+
+    @NotNull
+    private String companyName;
 
     private String shortDescriptionUz;
     private String shortDescriptionUzCry;
@@ -62,10 +57,7 @@ public class ApplicationRequest {
                 .middleName(request.getMiddleName())
                 .brandName(request.getBrandName())
                 /* Company */
-                .companyNameEn(request.getCompanyNameEn())
-                .companyNameRu(request.getCompanyNameRu())
-                .companyNameUz(request.getCompanyNameUz())
-                .companyNameUzCry(request.getCompanyNameUzCry())
+                .companyName(request.getCompanyName())
                 .inn(request.getInn())
                 .shortDescriptionEn(request.getShortDescriptionEn())
                 .shortDescriptionRu(request.getShortDescriptionRu())

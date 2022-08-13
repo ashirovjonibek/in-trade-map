@@ -114,8 +114,8 @@ public class DataLoader implements CommandLineRunner {
                     "Admin",
                     "Admin",
                     "+998912345677",
-                    "admin123",
-                    passwordEncoder.encode("admin123321"),
+                    "user123",
+                    passwordEncoder.encode("user123"),
                     Collections.singleton(admin),
                     true,
                     true,
@@ -128,7 +128,7 @@ public class DataLoader implements CommandLineRunner {
                     "Sulaymonov",
                     "+998912345678",
                     "ahror123",
-                    passwordEncoder.encode("ahror123"),
+                    passwordEncoder.encode("ahror1234"),
                     Collections.singleton(admin),
                     true,
                     true,
@@ -192,6 +192,7 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("get_all_applications", "Get all application"));
             permissions.add(new Permissions("get_one_application", "Get one application"));
             permissions.add(new Permissions("delete_application", "Delete application"));
+
 
             permissions.forEach(perm -> {
                 if (permissionsList.stream().filter(perm1 -> perm.getName().equals(perm1.getName())).count() == 0) {

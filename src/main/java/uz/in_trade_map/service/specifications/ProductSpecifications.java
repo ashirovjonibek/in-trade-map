@@ -8,6 +8,8 @@ import uz.in_trade_map.entity.Product;
 import uz.in_trade_map.entity.User;
 import uz.in_trade_map.utils.AuthUser;
 
+import java.util.List;
+
 @Component
 public class ProductSpecifications {
     public static Specification<Product> findByRegionId(Integer regionId) {
@@ -35,10 +37,10 @@ public class ProductSpecifications {
                 .get("brandName"), "%" + brandName + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<Product> findByCategoryId(Integer categoryId) {
-        return (root, query, builder) -> categoryId != null ? builder.equal(root
-                .get("category")
-                .get("id"), categoryId) : query.getGroupRestriction();
+    public static Specification<Product> findByCategoryId(List<Integer> categoryIds) {
+        return (root, query, builder) -> categoryIds != null ? root
+                .join("category")
+                .get("id").in(categoryIds) : query.getGroupRestriction();
     }
 
     public static Specification<Product> findByCompanyId(Integer companyId) {

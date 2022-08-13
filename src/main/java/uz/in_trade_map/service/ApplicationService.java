@@ -13,6 +13,7 @@ import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
 import uz.in_trade_map.utils.dto_converter.DtoConverter;
+import uz.in_trade_map.utils.request_objects.ApplicationRejectedRequest;
 import uz.in_trade_map.utils.request_objects.ApplicationRequest;
 import uz.in_trade_map.utils.validator.Validator;
 
@@ -97,7 +98,6 @@ public class ApplicationService extends Validator<ApplicationRequest> {
     }
 
     public ResponseEntity<?> getAll(
-            String search,
             String brandName,
             String inn,
             String firstName,
@@ -121,10 +121,7 @@ public class ApplicationService extends Validator<ApplicationRequest> {
                             .and(findByLastName(lastName))
                             .and(findByMiddleName(middleName))
                             .and(findByIsConfirm(isConfirm))
-                            .and(findByNameEn(search))
-                            .or(findByNameUz(search))
-                            .or(findByNameUzCry(search))
-                            .or(findByNameRu(search))
+                            .and(activeTrue())
                     ), pageable);
             Map<String, Object> response = new HashMap<>();
             Meta meta = new Meta(applications.getTotalElements(), applications.getTotalPages(), page, size);
@@ -150,18 +147,24 @@ public class ApplicationService extends Validator<ApplicationRequest> {
         }
     }
 
-    public ResponseEntity<?> deleteApplication(Integer id) {
+    public ResponseEntity<?> deleteApplication(ApplicationRejectedRequest rejectedRequest) {
         try {
-            Optional<Application> optionalApplication = applicationRepository.findByIdAndActiveTrue(id);
+            Validator<ApplicationRejectedRequest> validator = new Validator<>();
+            Map<String, Object> valid = validator.valid(rejectedRequest);
+            if (valid.size() > 0)
+                return AllApiResponse.response(422, 0, "Validator errors!", valid);
+            Optional<Application> optionalApplication = applicationRepository.findByIdAndActiveTrueAndIsConfirm(rejectedRequest.getApplicationId(), 0);
             if (optionalApplication.isPresent()) {
                 Application application = optionalApplication.get();
                 application.setActive(false);
                 applicationRepository.save(application);
-                return AllApiResponse.response(1, "Application deleted successfully!");
-            } else return AllApiResponse.response(404, 0, "Application not fount with id!");
+                String message = "Hurmatli " + application.getFirstName() + " " + application.getLastName() + " " + application.getMiddleName() + " sizning http://intrademap.uz saytiga bergan arizangiz rad etildi.\nIzoh: " + rejectedRequest.getRejectMessage();
+                smsService.sendSms(application.getBossPhone(), message);
+                return AllApiResponse.response(1, "Application rejected!");
+            } else return AllApiResponse.response(404, 0, "Application not found or status confirmed!");
         } catch (Exception e) {
             e.printStackTrace();
-            return AllApiResponse.response(500, 0, "Error delete application", e.getMessage());
+            return AllApiResponse.response(500, 0, "Error reject application", e.getMessage());
         }
     }
 
@@ -188,7 +191,7 @@ public class ApplicationService extends Validator<ApplicationRequest> {
             resp.put("company", DtoConverter.companyDto(savedCompany, null));
             String text = "Hutmatli " + savedUser.getFirstName() + " " + savedUser.getLastName() + " " + savedUser.getMiddleName() + " sizning https://intrademap.uz saytida qoldirgan arizangiz ko'rib chiqib tasdiqlandi! Tizimga kirish uchun loginingiz: " +
                     "intrademap_user_" + application.getBossPhone().substring(1)
-                    + "\n Parolingiz: " + password+"\n" +
+                    + "\n Parolingiz: " + password + "\n" +
                     "Havola: https://intrademap.uz/login";
             smsService.sendSms(savedUser.getPhoneNumber(), text);
             return resp;

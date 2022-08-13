@@ -14,16 +14,11 @@ import uz.in_trade_map.utils.validator.annotations.NotNull;
 @NoArgsConstructor
 public class CompanyRequest {
 
-    private String nameUz;
-
-    private String nameRu;
-
-    private String nameEn;
-
-    private String nameUzCry;
-
     @NotNull
     private String brandName;
+
+    @NotNull
+    private String name;
 
     private String shortDescriptionUz;
 
@@ -71,10 +66,7 @@ public class CompanyRequest {
     public static Company convertCompany(CompanyRequest request) {
         return Company.builder()
                 .brandName(request.getBrandName())
-                .nameUz(request.getNameUz())
-                .nameRu(request.getNameRu())
-                .nameEn(request.getNameEn())
-                .nameUzCry(request.getNameUzCry())
+                .name(request.getName())
                 .descriptionEn(request.getDescriptionEn())
                 .descriptionRu(request.getDescriptionRu())
                 .descriptionUz(request.getDescriptionUz())
@@ -88,5 +80,24 @@ public class CompanyRequest {
                 .blocked(false)
                 .productAlwaysConfirm(request.isProductAlwaysConfirm())
                 .build();
+    }
+
+    public static Company convertCompany(CompanyRequest request, Company company) {
+        company.setBrandName(request.getBrandName());
+        company.setName(request.getName());
+        company.setDescriptionEn(request.getDescriptionEn());
+        company.setDescriptionRu(request.getDescriptionRu());
+        company.setDescriptionUz(request.getDescriptionUz());
+        company.setDescriptionUzCry(request.getDescriptionUzCry());
+        company.setShortDescriptionEn(request.getShortDescriptionEn());
+        company.setShortDescriptionRu(request.getShortDescriptionRu());
+        company.setShortDescriptionUz(request.getShortDescriptionUz());
+        company.setShortDescriptionUzCry(request.getShortDescriptionUzCry());
+        company.setInn(request.getInn());
+        company.setActive(true);
+        company.setBlocked(false);
+        company.setProductAlwaysConfirm(request.isProductAlwaysConfirm());
+
+        return company;
     }
 }

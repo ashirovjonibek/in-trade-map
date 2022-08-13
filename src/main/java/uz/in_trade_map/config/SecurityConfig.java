@@ -29,20 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     AuthService authService;
 
-    @Value("${chat.server.host}")
-    private String host;
-
-    @Value("${chat.server.port}")
-    private Integer port;
-
-    @Bean
-    public SocketIOServer socketIOServer() {
-        com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname(host);
-        config.setPort(port);
-        return new SocketIOServer(config);
-    }
-
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

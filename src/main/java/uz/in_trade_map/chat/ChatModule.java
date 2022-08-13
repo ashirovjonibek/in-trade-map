@@ -68,6 +68,7 @@ public class ChatModule {
     private DisconnectListener onDisconnected() {
         return client -> {
             log.debug("Client[{}] - Disconnected from chat module.", client.getSessionId().toString());
+            namespace.getBroadcastOperations().sendEvent("notifications", "user dis connected");
         };
     }
 

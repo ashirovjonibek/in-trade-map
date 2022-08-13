@@ -54,10 +54,12 @@ public class CompanyController extends Validator<CompanyRequest> {
         if (valid.size() > 0) {
             return AllApiResponse.response(422, 0, "Validator errors!", valid);
         } else {
-            String[] split = oldPhotoIds.split(",");
-            UUID[] uuids = new UUID[split.length];
-            for (int i = 0; i < split.length; i++) {
-                uuids[i] = UUID.fromString(split[i]);
+            String[] split = oldPhotoIds != null && !oldPhotoIds.isEmpty() ? oldPhotoIds.split(",") : null;
+            UUID[] uuids = new UUID[split != null ? split.length : 0];
+            if (split != null) {
+                for (int i = 0; i < split.length; i++) {
+                    uuids[i] = UUID.fromString(split[i]);
+                }
             }
             return companyService.edit(id, request, uuids, oldImage, oldLogo);
         }
@@ -65,13 +67,12 @@ public class CompanyController extends Validator<CompanyRequest> {
 
     @GetMapping
     public HttpEntity<?> getAll(
-            @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer locationId,
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) String inn,
             @RequestParam(required = false) String brandName,
             @RequestParam(required = false) Integer regionId,
             @RequestParam(required = false) Integer districtId,
-            @RequestParam(required = false) Integer quarterId,
             @RequestParam(required = false) String expand,
             @RequestParam(required = false) String address,
             @RequestParam(required = false, defaultValue = "1") int page,
@@ -84,7 +85,6 @@ public class CompanyController extends Validator<CompanyRequest> {
                 brandName,
                 regionId,
                 districtId,
-                quarterId,
                 expand,
                 address,
                 size,
@@ -97,7 +97,7 @@ public class CompanyController extends Validator<CompanyRequest> {
         return companyService.getOne(id, expand);
     }
 
-    @PostMapping(value = "/status/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/status/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public HttpEntity<?> changeStatus(@PathVariable Integer id, @RequestParam Integer status) {
         return companyService.setConfirmStatus(id, status);
     }

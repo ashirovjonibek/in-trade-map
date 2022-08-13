@@ -42,15 +42,20 @@ public class Application implements Serializable {
 
     private boolean active = true;
 
-    private String companyNameUz;
-    private String companyNameUzCry;
-    private String companyNameRu;
-    private String companyNameEn;
     private String brandName;
+    private String companyName;
     private String inn;
+
+    @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionUz;
+
+    @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionUzCry;
+
+    @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionRu;
+
+    @Column(columnDefinition = "text", length = 1000)
     private String shortDescriptionEn;
 
     /**

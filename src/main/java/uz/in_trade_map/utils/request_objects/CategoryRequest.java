@@ -55,4 +55,17 @@ public class CategoryRequest {
                 .active(true)
                 .build();
     }
+
+    public static Category request(CategoryRequest request, Category category) {
+        category.setNameUz(request.getNameUz());
+        category.setNameRu(request.getNameRu());
+        category.setNameEn(request.getNameEn());
+        category.setNameUzCry(request.getNameUzCry());
+        category.setDescriptionUz(request.getDescriptionUz());
+        category.setDescriptionRu(request.getDescriptionRu());
+        category.setDescriptionEn(request.getDescriptionEn());
+        category.setDescriptionUzCry(request.getDescriptionUzCry());
+        category.setActive(true);
+        return category;
+    }
 }

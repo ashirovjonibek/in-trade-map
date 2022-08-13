@@ -48,25 +48,25 @@ public class CompanySpecifications {
                 .get("brandName"), "%" + brandName + "%") : query.getGroupRestriction();
     }
 
-    public static Specification<Company> findByNameUz(String nameUz) {
-        return (root, query, builder) -> nameUz != null ? builder.like(root
-                .get("nameUz"), "%" + nameUz + "%") : query.getGroupRestriction();
+    public static Specification<Company> findByName(String name) {
+        return (root, query, builder) -> name != null ? builder.like(root
+                .get("name"), "%" + name + "%") : query.getGroupRestriction();
     }
-
-    public static Specification<Company> findByNameRu(String nameRu) {
-        return (root, query, builder) -> nameRu != null ? builder.like(root
-                .get("nameRu"), "%" + nameRu + "%") : query.getGroupRestriction();
-    }
-
-    public static Specification<Company> findByNameEn(String nameEn) {
-        return (root, query, builder) -> nameEn != null ? builder.like(root
-                .get("nameEn"), "%" + nameEn + "%") : query.getGroupRestriction();
-    }
-
-    public static Specification<Company> findByNameUzCry(String nameUzCry) {
-        return (root, query, builder) -> nameUzCry != null ? builder.like(root
-                .get("nameUzCry"), "%" + nameUzCry + "%") : query.getGroupRestriction();
-    }
+//
+//    public static Specification<Company> findByNameRu(String nameRu) {
+//        return (root, query, builder) -> nameRu != null ? builder.like(root
+//                .get("nameRu"), "%" + nameRu + "%") : query.getGroupRestriction();
+//    }
+//
+//    public static Specification<Company> findByNameEn(String nameEn) {
+//        return (root, query, builder) -> nameEn != null ? builder.like(root
+//                .get("nameEn"), "%" + nameEn + "%") : query.getGroupRestriction();
+//    }
+//
+//    public static Specification<Company> findByNameUzCry(String nameUzCry) {
+//        return (root, query, builder) -> nameUzCry != null ? builder.like(root
+//                .get("nameUzCry"), "%" + nameUzCry + "%") : query.getGroupRestriction();
+//    }
 
     public static Specification<Company> activeTrue() {
         return (root, query, builder) -> builder.equal(root

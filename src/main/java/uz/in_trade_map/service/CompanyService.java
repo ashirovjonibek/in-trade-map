@@ -63,18 +63,18 @@ public class CompanyService {
                 if (byId.isPresent()) {
                     Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
                     ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
-                    Company company = CompanyRequest.convertCompany(request);
+                    Company company = CompanyRequest.convertCompany(request, companyOptional.get());
                     if (request.getLogo() != null) {
                         company.setLogo(attachmentService.uploadFile(request.getLogo()));
                     } else {
-                        if (oldLogo == 1) {
+                        if (oldLogo != null && oldLogo == 1) {
                             company.setLogo(companyOptional.get().getLogo());
                         } else company.setLogo(null);
                     }
                     if (request.getImage() != null) {
                         company.setImage(attachmentService.uploadFile(request.getImage()));
                     } else {
-                        if (oldImage == 1) {
+                        if (oldImage != null && oldImage == 1) {
                             company.setImage(companyOptional.get().getImage());
                         } else company.setImage(null);
                     }
@@ -119,7 +119,6 @@ public class CompanyService {
             String brandName,
             Integer regionId,
             Integer districtId,
-            Integer quarterId,
             String expand,
             String address,
             int size,
@@ -129,12 +128,9 @@ public class CompanyService {
             Pageable pageable = PageRequest.of(page - 1, size);
             Page<Company> companies = companyRepository.findAll(
                     where(
-                            findByNameUz(search))
-                            .or(findByNameRu(search))
-                            .or(findByNameEn(search))
-                            .or(findByNameUzCry(search))
+                            findByBrandName(brandName))
+                            .and(findByName(search))
                             .and(findByAddress(address))
-                            .and(findByBrandName(brandName))
                             .and(findByLocationId(locationId))
                             .and(findByInn(inn))
                             .and(findByRegionId(regionId))

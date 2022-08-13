@@ -306,6 +306,11 @@ public class UserService extends Validator<UserRequest> {
             User user = (User) AuthUser.getCurrentUser().getPrincipal();
             if (op.isPresent() && !user.getId().equals(op.get().getId()) && op.get().getRoles().stream().filter(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN)).count() == 0) {
                 User user1 = op.get();
+                Company company = user.getCompany();
+                if (company != null) {
+                    company.setActive(false);
+                    companyRepository.save(company);
+                }
                 user1.setActive(false);
                 userRepository.save(user1);
                 return AllApiResponse.response(1, "User deleted successfully");
