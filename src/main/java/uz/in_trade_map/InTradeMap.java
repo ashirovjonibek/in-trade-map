@@ -9,17 +9,11 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class InTradeMap {
 
-    @Value("${chat.server.host}")
-    private String host;
-
-    @Value("${chat.server.port}")
-    private Integer port;
-
     @Bean
     public SocketIOServer socketIOServer() {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname(host);
-        config.setPort(port);
+        config.setHostname("localhost");
+        config.setPort(9090);
         return new SocketIOServer(config);
     }
 
