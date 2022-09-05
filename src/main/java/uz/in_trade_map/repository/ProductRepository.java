@@ -22,6 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
             "min(export_priceuzs) as minExportPriceUZS," +
             "max(export_priceusd) as maxExportPriceUSD," +
             "min(export_priceusd) as minExportPriceUSD" +
-            " from product")
+            " from product where active=true")
     MaxMinProjectionForProduct maxMinPrices();
 }
