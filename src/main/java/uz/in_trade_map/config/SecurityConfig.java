@@ -56,10 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .csrf()
-//                .ignoringAntMatchers("/chat/**")
-//                .and()
-//                .headers()
-//                .frameOptions().sameOrigin()
                 .disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -77,13 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/company/**",
                         "/api/product/**",
                         "/api/application/**",
-                        "/chat/**"
+                        "/api/news/**"
                 )
                 .permitAll()
                 .antMatchers("/api/**")
                 .authenticated();
-        http.headers().frameOptions().disable()
-                .httpStrictTransportSecurity().disable();
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

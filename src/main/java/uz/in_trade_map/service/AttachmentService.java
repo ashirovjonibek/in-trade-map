@@ -14,8 +14,8 @@ import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.AttachmentContentRepository;
 import uz.in_trade_map.repository.AttachmentRepository;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service
@@ -188,5 +188,37 @@ public class AttachmentService {
 
     private String getExt(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public Attachment uploadFile(String content) throws IOException {
+        Date date = new Date();
+        File folder = new File(String.format("%s/%d/%d/%d", uploadFolder, 1900 + date.getYear(), 1 + date.getMonth(), date.getDate()));
+        if (!folder.exists() && folder.mkdirs()) {
+            System.out.println("folder created!!!");
+        }
+        Attachment attachment = null;
+        attachment = new Attachment(
+                0L,
+                "newsFile",
+                "json",
+                "JSON",
+                uploadFolder
+
+        );
+        Attachment savedAttachment = attachmentRepository.save(attachment);
+        savedAttachment.setFilePath(String.format("%d/%d/%d/%s.%s", 1900 + date.getYear(), 1 + date.getMonth(), date.getDate(),
+                savedAttachment.getId(),
+                savedAttachment.getExtension()
+        ));
+        folder = folder.getAbsoluteFile();
+        File file1 = new File(folder, String.format("%s.%s", savedAttachment.getId(), savedAttachment.getExtension()));
+        if (!file1.exists()) {
+            boolean newFile = file1.createNewFile();
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file1.getPath()));
+        writer.write(content);
+        writer.close();
+        savedAttachment.setSize(Files.size(file1.toPath()));
+        return attachmentRepository.save(savedAttachment);
     }
 }

@@ -9,14 +9,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class InTradeMap {
 
-    @Bean
-    public SocketIOServer socketIOServer() {
-        com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname("localhost");
-        config.setPort(9090);
-        return new SocketIOServer(config);
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(InTradeMap.class, args);
 
