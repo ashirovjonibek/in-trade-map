@@ -40,8 +40,37 @@ public class News implements Serializable {
 
     private boolean active = true;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private Attachment content;
+    private String labelUz;
+
+    private String labelRu;
+
+    private String labelUzCry;
+
+    private String labelEn;
+
+    @Column(columnDefinition = "text")
+    private String descriptionUz;
+
+    @Column(columnDefinition = "text")
+    private String descriptionRu;
+
+    @Column(columnDefinition = "text")
+    private String descriptionEn;
+
+    @Column(columnDefinition = "text")
+    private String descriptionUzCry;
+
+    @Column(columnDefinition = "text",length = 1000)
+    private String shortDescriptionUz;
+
+    @Column(columnDefinition = "text",length = 1000)
+    private String shortDescriptionRu;
+
+    @Column(columnDefinition = "text",length = 1000)
+    private String shortDescriptionEn;
+
+    @Column(columnDefinition = "text",length = 1000)
+    private String shortDescriptionUzCry;
 
     @OneToOne(fetch = FetchType.EAGER)
     private Attachment photo;

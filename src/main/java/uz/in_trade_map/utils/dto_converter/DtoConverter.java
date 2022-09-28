@@ -141,6 +141,25 @@ public class DtoConverter {
         return response;
     }
 
+    public static Map<String, Object> newsDto(News news) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", news.getId());
+        response.put("generalPhoto", news.getPhoto() != null ? news.getPhoto().getId() : null);
+        response.put("labelUz", news.getLabelUz());
+        response.put("labelRu", news.getLabelRu());
+        response.put("labelEn", news.getLabelEn());
+        response.put("labelUzCry", news.getLabelUzCry());
+        response.put("shortDescriptionUz", news.getShortDescriptionUz());
+        response.put("shortDescriptionRu", news.getShortDescriptionRu());
+        response.put("shortDescriptionEn", news.getShortDescriptionEn());
+        response.put("shortDescriptionUzCry", news.getShortDescriptionUzCry());
+        response.put("descriptionUz", news.getDescriptionUz());
+        response.put("descriptionRu", news.getDescriptionRu());
+        response.put("descriptionEn", news.getDescriptionEn());
+        response.put("descriptionUzCry", news.getDescriptionUzCry());
+        return response;
+    }
+
     public static Map<String, Object> emptySpacesDto(EmptySpace emptySpace, String expand) {
         Map<String, Object> response = new HashMap<>();
         response.put("id", emptySpace.getId());

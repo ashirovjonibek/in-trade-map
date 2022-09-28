@@ -100,6 +100,9 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("get_all_applications", "Get all application"));
             permissions.add(new Permissions("get_one_application", "Get one application"));
             permissions.add(new Permissions("delete_application", "Delete application"));
+            permissions.add(new Permissions("delete_news", "Delete news"));
+            permissions.add(new Permissions("update_news", "Update news"));
+            permissions.add(new Permissions("create_news", "Create news"));
 
             List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
 
@@ -192,6 +195,9 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("get_all_applications", "Get all application"));
             permissions.add(new Permissions("get_one_application", "Get one application"));
             permissions.add(new Permissions("delete_application", "Delete application"));
+            permissions.add(new Permissions("delete_news", "Delete news"));
+            permissions.add(new Permissions("update_news", "Update news"));
+            permissions.add(new Permissions("create_news", "Create news"));
 
 
             permissions.forEach(perm -> {
