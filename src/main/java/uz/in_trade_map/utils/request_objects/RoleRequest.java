@@ -31,6 +31,8 @@ public class RoleRequest {
     @NotNull
     private String roleName;
 
+    private Integer parentId;
+
     public static Role convertToRole(RoleRequest request) {
         return Role.builder()
                 .nameUz(request.getNameUz())

@@ -6,12 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
+import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
+import uz.in_trade_map.utils.AuthUser;
 import uz.in_trade_map.utils.dto_converter.DtoConverter;
 import uz.in_trade_map.utils.request_objects.CompanyRequest;
 
@@ -39,7 +42,7 @@ public class CompanyService {
                 Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
                 ContactData data = new ContactData();
                 data.setLocation(location);
-//                data.setSocialMedia(request.getSocialMedia());
+                data.setSocialMedia(request.getSocialMedia());
                 ContactData contactData = contactDataRepository.save(data);
                 Company company = CompanyRequest.convertCompany(request);
                 company.setCertificates(attachmentService.uploadFile(Arrays.asList(request.getCertificates())));
@@ -61,9 +64,27 @@ public class CompanyService {
             if (companyOptional.isPresent()) {
                 Optional<District> byId = districtRepository.findById(request.getDistrictId());
                 if (byId.isPresent()) {
-                    Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
-                    ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), location));
-                    Company company = CompanyRequest.convertCompany(request, companyOptional.get());
+                    Company company1 = companyOptional.get();
+                    if (company1.getData() != null) {
+                        ContactData data = company1.getData();
+                        data.setSocialMedia(request.getSocialMedia());
+                        Location location;
+                        if (data.getLocation() != null) {
+                            location = data.getLocation();
+                            location.setDistrict(byId.get());
+                            location.setAddress(request.getAddress());
+                            location.setLat(request.getLat());
+                            location.setLng(request.getLng());
+                        } else {
+                            location = new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng());
+                        }
+                        data.setLocation(locationRepository.save(location));
+                        company1.setData(contactDataRepository.save(data));
+                    } else {
+                        ContactData contactData = contactDataRepository.save(new ContactData(request.getSocialMedia(), locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()))));
+                        company1.setData(contactData);
+                    }
+                    Company company = CompanyRequest.convertCompany(request, company1);
                     if (request.getLogo() != null) {
                         company.setLogo(attachmentService.uploadFile(request.getLogo()));
                     } else {
@@ -101,7 +122,6 @@ public class CompanyService {
                         }
                     }
                     company.setId(id);
-                    company.setData(contactData);
                     Company save = companyRepository.save(company);
                     return AllApiResponse.response(1, "Company updated successfully!", DtoConverter.companyDto(save, null));
                 } else return AllApiResponse.response(404, 0, "District not found!");
@@ -126,10 +146,13 @@ public class CompanyService {
     ) {
         try {
             Pageable pageable = PageRequest.of(page - 1, size);
+            Authentication currentUser = AuthUser.getCurrentUser();
+            User user = (User) currentUser.getPrincipal();
             Page<Company> companies = companyRepository.findAll(
                     where(
                             findByBrandName(brandName))
                             .and(findByName(search))
+                            .and(findIds(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN.name())) ? null : new HashSet<>(Collections.singleton(user.getCompany().getId()))))
                             .and(findByAddress(address))
                             .and(findByLocationId(locationId))
                             .and(findByInn(inn))
@@ -143,7 +166,7 @@ public class CompanyService {
                 Map<String, Object> dto = DtoConverter.companyDto(company, expand);
                 if (expand != null && expand.contains("employees")) {
                     List<User> users = userRepository.findAllByCompanyIdAndActiveTrue(company.getId());
-                    dto.put("employees", users.stream().map(user -> DtoConverter.userDto(user, expand)).collect(Collectors.toList()));
+                    dto.put("employees", users.stream().map(user1 -> DtoConverter.userDto(user1, expand)).collect(Collectors.toList()));
                 }
                 return dto;
             }).collect(Collectors.toList());

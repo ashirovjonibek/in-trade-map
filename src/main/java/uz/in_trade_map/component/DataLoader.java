@@ -29,6 +29,9 @@ public class DataLoader implements CommandLineRunner {
     @Value("${spring.sql.init.mode}")
     String mode;
 
+    @Value("${dataloader.refresh}")
+    String otherMode;
+
     @Value("classpath:data/region.json")
     Resource region;
 
@@ -106,12 +109,10 @@ public class DataLoader implements CommandLineRunner {
 
             List<Permissions> permissionsList = permissionsRepository.saveAll(permissions);
 
-            List<Role> roles = new ArrayList<>();
-            roles.add(new Role("Tekshiruvchi admin", "Администратор чекера", "Текширувчи админ", "Checker admin", null, RoleName.ROLE_CHECKER_ADMIN.name()));
-            roles.add(new Role("Direktor", "Директор", "Директор", "Director", null, RoleName.ROLE_COMPANY_DIRECTOR.name()));
-            roles.add(new Role("Writer", "Писатель", "Ёзувчи", "Writer", null, RoleName.ROLE_WRITER.name()));
-            Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", permissions, RoleName.ROLE_ADMIN.name()));
-            roleRepository.saveAll(roles);
+            Role admin = roleRepository.save(new Role("Admin", "Администратор", "Админ", "Admin", permissions, RoleName.ROLE_ADMIN.name(), null));
+            Role checker_admin = roleRepository.save(new Role("Tekshiruvchi admin", "Администратор чекера", "Текширувчи админ", "Checker admin", null, RoleName.ROLE_CHECKER_ADMIN.name(), admin));
+            Role director = roleRepository.save(new Role("Direktor", "Директор", "Директор", "Director", null, RoleName.ROLE_COMPANY_DIRECTOR.name(), admin));
+            Role writer = roleRepository.save(new Role("Writer", "Писатель", "Ёзувчи", "Writer", null, RoleName.ROLE_WRITER.name(), director));
             List<User> users = new ArrayList<>();
             users.add(new User(
                     "Admin",
@@ -212,6 +213,27 @@ public class DataLoader implements CommandLineRunner {
                 role.setPermissions(permissionsList);
                 roleRepository.save(role);
             }
+
+            if (otherMode.equals("refresh")) {
+                Optional<Role> admin = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
+                Optional<Role> checker_admin = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
+                Optional<Role> director = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
+                Optional<Role> writer = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
+                if (admin.isPresent()) {
+                    if (director.isPresent()) {
+                        Role role = director.get();
+                        role.setParent(admin.get());
+                        if (writer.isPresent()) {
+                            Role role1 = writer.get();
+                            role1.setParent(role);
+                            roleRepository.save(role1);
+                        }
+                        roleRepository.save(role);
+                    }
+                }
+
+            }
+
         }
 
     }

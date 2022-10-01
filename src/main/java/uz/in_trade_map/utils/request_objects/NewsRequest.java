@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class NewsRequest {
 
-    @FieldTypeFile(extension = ".png,.jpg,.jpeg", size = 1024 * 1024 * 2)
+    @FieldTypeFile(extension = ".png,.jpg,.jpeg", size = 1024 * 1024 * 5)
     private MultipartFile generalPhoto;
 
     @NotNull(maxLength = 255, minLength = 5)

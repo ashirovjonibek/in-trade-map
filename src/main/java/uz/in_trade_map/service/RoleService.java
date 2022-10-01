@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.Permissions;
 import uz.in_trade_map.entity.Role;
+import uz.in_trade_map.entity.User;
 import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.PermissionsRepository;
@@ -44,6 +45,12 @@ public class RoleService extends Validator<RoleRequest> {
                 return AllApiResponse.response(422, 0, "Validator errors", valid);
             } else {
                 Role role = RoleRequest.convertToRole(request);
+                if (request.getParentId() != null) {
+                    Optional<Role> byId = roleRepository.findById(request.getParentId());
+                    if (byId.isPresent()) {
+                        role.setParent(byId.get());
+                    } else return AllApiResponse.response(422, 0, "Parent role not fount with id!");
+                }
                 List<Permissions> allById = permissionsRepository.findAllByNameIn(new HashSet<>(request.getPermissions()));
                 role.setPermissions(allById);
                 Role save = roleRepository.save(role);
@@ -68,6 +75,12 @@ public class RoleService extends Validator<RoleRequest> {
                         return AllApiResponse.response(422, 0, "Validator errors", valid);
                     } else {
                         Role role = RoleRequest.convertToRole(request, optionalRole.get());
+                        if (request.getParentId() != null) {
+                            Optional<Role> byId = roleRepository.findById(request.getParentId());
+                            if (byId.isPresent()) {
+                                role.setParent(byId.get());
+                            } else return AllApiResponse.response(422, 0, "Parent role not fount with id!");
+                        }
                         List<Permissions> allById = permissionsRepository.findAllByNameIn(new HashSet<>(request.getPermissions()));
                         role.setPermissions(allById);
                         role.setId(optionalRole.get().getId());
@@ -84,12 +97,15 @@ public class RoleService extends Validator<RoleRequest> {
 
     public ResponseEntity<?> getAllRoles(String search, String expand, int page, int size) {
         try {
+            Authentication currentUser = AuthUser.getCurrentUser();
+            User user = (User) currentUser.getPrincipal();
             Page<Role> roles = roleRepository.findAll(
                     where(findByNameUz(search))
                             .or(findByNameEn(search))
                             .or(findByNameRu(search))
                             .or(findByNameUzCry(search))
                             .and(findByNotRoleAdmin())
+                            .and(findByParentId(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN.name()))?null:user.getRoles().stream().map(Role::getId).collect(Collectors.toSet())))
                             .and(activeTrue()),
                     PageRequest.of(page - 1, size)
             );

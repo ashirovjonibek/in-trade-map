@@ -6,6 +6,8 @@ import uz.in_trade_map.entity.Company;
 import uz.in_trade_map.entity.Role;
 import uz.in_trade_map.entity.enums.RoleName;
 
+import java.util.Set;
+
 @Component
 public class RoleSpecifications {
     public static Specification<Role> findByNameUz(String nameUz) {
@@ -31,6 +33,11 @@ public class RoleSpecifications {
     public static Specification<Role> findByNotRoleAdmin() {
         return (root, query, builder) -> builder.notEqual(root
                 .get("roleName"), RoleName.ROLE_ADMIN.name());
+    }
+
+    public static Specification<Role> findByParentId(Set<Integer> id) {
+        return (root, query, builder) -> id != null ? root
+                .get("parentId").in(id) : query.getGroupRestriction();
     }
 
     public static Specification<Role> activeTrue() {

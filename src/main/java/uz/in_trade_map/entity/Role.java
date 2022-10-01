@@ -43,6 +43,9 @@ public class Role implements Serializable {
     @Column(unique = true)
     private String roleName;
 
+    @ManyToOne
+    private Role parent;
+
     private boolean active = true;
 
     @CreationTimestamp
@@ -57,12 +60,13 @@ public class Role implements Serializable {
     @LastModifiedBy
     private User updatedBy;
 
-    public Role(String nameUz, String nameRu, String nameUzCry, String nameEn, List<Permissions> permissions, String roleName) {
+    public Role(String nameUz, String nameRu, String nameUzCry, String nameEn, List<Permissions> permissions, String roleName,Role parent) {
         this.nameUz = nameUz;
         this.nameRu = nameRu;
         this.nameUzCry = nameUzCry;
         this.nameEn = nameEn;
         this.permissions = permissions;
         this.roleName = roleName;
+        this.parent=parent;
     }
 }

@@ -10,4 +10,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     Optional<Application> findByIdAndActiveTrue(Integer id);
 
     Optional<Application> findByIdAndActiveTrueAndIsConfirm(Integer id, Integer status);
+
+    boolean existsByBossPhoneAndActiveTrue(String phone);
 }

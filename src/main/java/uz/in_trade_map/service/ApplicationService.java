@@ -35,12 +35,23 @@ public class ApplicationService extends Validator<ApplicationRequest> {
     private final UserPasswordsRepository userPasswordsRepository;
 
     public ResponseEntity<?> sendSms(Integer id, String phoneNumber) {
-        CheckPhone checkPhone = smsService.sendSms(id, phoneNumber);
-        Map<String, Object> resp = new HashMap<>();
-        resp.put("id", checkPhone.getId());
-        resp.put("sent", checkPhone.getCreatedAt());
-        resp.put("expire", checkPhone.getExpireDate());
-        return AllApiResponse.response(1, "Sms sent!", resp);
+        if (!phoneNumber.trim().startsWith("+")) {
+            phoneNumber = "+" + phoneNumber.trim();
+        }
+        boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
+        boolean exists = applicationRepository.existsByBossPhoneAndActiveTrue(phoneNumber);
+        if (existsByPhoneNumber || exists) {
+            String m = "Ushbu raqam avval ro'yhatdan o'tgan!";
+            String m1 = "Ushbu raqamdan avval arza yuborilgan!";
+            return AllApiResponse.response(2, existsByPhoneNumber ? m : m1);
+        } else {
+            CheckPhone checkPhone = smsService.sendSms(id, phoneNumber);
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("id", checkPhone.getId());
+            resp.put("sent", checkPhone.getCreatedAt());
+            resp.put("expire", checkPhone.getExpireDate());
+            return AllApiResponse.response(1, "Sms sent!", resp);
+        }
     }
 
     public ResponseEntity<?> checkPhone(Integer id, String code, String phoneNumber) {

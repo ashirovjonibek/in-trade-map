@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import uz.in_trade_map.entity.Company;
 import uz.in_trade_map.entity.Location;
 
+import java.util.Set;
+
 @Component
 public class CompanySpecifications {
     public static Specification<Company> findByRegionId(Integer regionId) {
@@ -14,6 +16,10 @@ public class CompanySpecifications {
                 .get("district")
                 .get("region")
                 .get("id"), regionId) : query.getGroupRestriction();
+    }
+
+    public static Specification<Company> findIds(Set<Integer> ids) {
+        return (root, query, builder) -> ids != null ? root.get("id").in(ids) : query.getGroupRestriction();
     }
 
     public static Specification<Company> findByDistrictId(Integer districtId) {
