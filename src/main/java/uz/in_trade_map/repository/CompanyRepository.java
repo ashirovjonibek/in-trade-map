@@ -11,5 +11,9 @@ public interface CompanyRepository extends JpaRepository<Company, Integer>, JpaS
 
     boolean existsByBrandNameAndActiveTrue(String brandName);
 
+    Optional<Company> findByBrandNameAndActiveTrue(String brandName);
+
     boolean existsByInnAndActiveTrue(String inn);
+
+    Optional<Company> findByInnAndActiveTrue(String inn);
 }

@@ -199,6 +199,12 @@ public class DataLoader implements CommandLineRunner {
             permissions.add(new Permissions("delete_news", "Delete news"));
             permissions.add(new Permissions("update_news", "Update news"));
             permissions.add(new Permissions("create_news", "Create news"));
+            permissions.add(new Permissions("delete_banner", "Create banner"));
+            permissions.add(new Permissions("update_banner", "Update banner"));
+            permissions.add(new Permissions("create_banner", "Delete banner"));
+            permissions.add(new Permissions("delete_statistic", "Create statistic"));
+            permissions.add(new Permissions("update_statistic", "Update statistic"));
+            permissions.add(new Permissions("create_statistic", "Delete statistic"));
 
 
             permissions.forEach(perm -> {
@@ -213,27 +219,6 @@ public class DataLoader implements CommandLineRunner {
                 role.setPermissions(permissionsList);
                 roleRepository.save(role);
             }
-
-            if (otherMode.equals("refresh")) {
-                Optional<Role> admin = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
-                Optional<Role> checker_admin = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
-                Optional<Role> director = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
-                Optional<Role> writer = roleRepository.findByRoleNameAndActiveTrue(RoleName.ROLE_ADMIN.name());
-                if (admin.isPresent()) {
-                    if (director.isPresent()) {
-                        Role role = director.get();
-                        role.setParent(admin.get());
-                        if (writer.isPresent()) {
-                            Role role1 = writer.get();
-                            role1.setParent(role);
-                            roleRepository.save(role1);
-                        }
-                        roleRepository.save(role);
-                    }
-                }
-
-            }
-
         }
 
     }

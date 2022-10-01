@@ -37,7 +37,7 @@ public class RoleSpecifications {
 
     public static Specification<Role> findByParentId(Set<Integer> id) {
         return (root, query, builder) -> id != null ? root
-                .get("parentId").in(id) : query.getGroupRestriction();
+                .get("parent").get("id").in(id) : query.getGroupRestriction();
     }
 
     public static Specification<Role> activeTrue() {

@@ -97,15 +97,14 @@ public class RoleService extends Validator<RoleRequest> {
 
     public ResponseEntity<?> getAllRoles(String search, String expand, int page, int size) {
         try {
-            Authentication currentUser = AuthUser.getCurrentUser();
-            User user = (User) currentUser.getPrincipal();
+            AuthUser authUser = new AuthUser();
             Page<Role> roles = roleRepository.findAll(
                     where(findByNameUz(search))
                             .or(findByNameEn(search))
                             .or(findByNameRu(search))
                             .or(findByNameUzCry(search))
                             .and(findByNotRoleAdmin())
-                            .and(findByParentId(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN.name()))?null:user.getRoles().stream().map(Role::getId).collect(Collectors.toSet())))
+                            .and(findByParentId(authUser.isAdmin() ? null : authUser.getUser().getRoles().stream().map(Role::getId).collect(Collectors.toSet())))
                             .and(activeTrue()),
                     PageRequest.of(page - 1, size)
             );
@@ -132,13 +131,23 @@ public class RoleService extends Validator<RoleRequest> {
     }
 
     public ResponseEntity<?> delete(String roleName) {
+        AuthUser user = new AuthUser();
         if (!roleName.equals(RoleName.ROLE_ADMIN.name())) {
             Optional<Role> optionalRole = roleRepository.findByRoleNameAndActiveTrue(roleName);
             if (optionalRole.isPresent()) {
-                Role role = optionalRole.get();
-                role.setActive(false);
-                roleRepository.save(role);
-                return AllApiResponse.response(1, "Role deleted successfully!");
+                if (user.isAdmin()) {
+                    Role role = optionalRole.get();
+                    role.setActive(false);
+                    roleRepository.save(role);
+                    return AllApiResponse.response(1, "Role deleted successfully!");
+                } else if (user.getUser().getId().equals(optionalRole.get().getCreatedBy().getId())) {
+                    Role role = optionalRole.get();
+                    role.setActive(false);
+                    roleRepository.save(role);
+                    return AllApiResponse.response(1, "Role deleted successfully!");
+                } else {
+                    return AllApiResponse.response(422, 0, "You cannot delete this role!");
+                }
             } else {
                 return AllApiResponse.response(404, 0, "Role not fount with roleName!");
             }
@@ -149,11 +158,19 @@ public class RoleService extends Validator<RoleRequest> {
 
     public ResponseEntity<?> allPermissions() {
         try {
-            List<Permissions> permissions = permissionsRepository.findAll();
+            AuthUser user = new AuthUser();
+            Set<Permissions> permissions;
+            if (user.isAdmin()) {
+                permissions = new HashSet<>(permissionsRepository.findAll());
+            } else {
+                permissions = new HashSet<>();
+                user.getUser().getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
+            }
             return AllApiResponse.response(1, "All permissions!", permissions);
         } catch (Exception e) {
             e.printStackTrace();
             return AllApiResponse.response(500, 0, "Error get permissions!", e.getMessage());
         }
     }
+
 }

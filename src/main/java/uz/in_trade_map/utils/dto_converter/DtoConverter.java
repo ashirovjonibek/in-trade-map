@@ -259,10 +259,15 @@ public class DtoConverter {
         response.put("roleName", role.getRoleName());
         response.put("createdAt", role.getCreatedAt());
         response.put("updatedAt", role.getUpdatedAt());
+        response.put("parentId", role.getParent() != null ? role.getParent().getId() : null);
 
         if (expand != null) {
             if (expand.contains("permissions") && role.getPermissions() != null) {
                 response.put("permissions", role.getPermissions().stream().map(Permissions::getName).collect(Collectors.toList()));
+            }
+
+            if (expand.contains("parent") && role.getParent() != null) {
+                response.put("parent", DtoConverter.roleDto(role.getParent()));
             }
 
             if (expand.contains("createdBy") && role.getCreatedBy() != null) {
@@ -316,5 +321,56 @@ public class DtoConverter {
             resp.put("username", user.getUsername() != null ? user.getUsername() : "");
             return resp;
         } else return null;
+    }
+
+    public static Map<String, Object> bannerDto(Banner banner, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", banner.getId());
+        response.put("titleUz", banner.getTitleUz());
+        response.put("titleEn", banner.getTitleEn());
+        response.put("titleRu", banner.getTitleRu());
+        response.put("titleUzCry", banner.getTitleUzCry());
+        response.put("textUz", banner.getTextUz());
+        response.put("textEn", banner.getTextEn());
+        response.put("textRu", banner.getTextRu());
+        response.put("textUzCry", banner.getTextUzCry());
+        response.put("photo", banner.getPhoto() != null ? banner.getPhoto().getId() : null);
+        response.put("productId", banner.getProduct() != null ? banner.getProduct().getId() : null);
+        if (expand != null && !expand.isEmpty()) {
+            if (expand.contains("product") && banner.getProduct() != null) {
+                response.put("product", DtoConverter.productDto(banner.getProduct(), null));
+            }
+            if (expand.contains("createdBy") && banner.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(banner.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && banner.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(banner.getUpdatedBy()));
+            }
+        }
+        return response;
+    }
+
+    public static Map<String, Object> statisticDto(Statistic statistic, String expand) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", statistic.getId());
+        response.put("titleUz", statistic.getTitleUz());
+        response.put("titleEn", statistic.getTitleEn());
+        response.put("titleRu", statistic.getTitleRu());
+        response.put("titleUzCry", statistic.getTitleUzCry());
+        response.put("textUz", statistic.getTextUz());
+        response.put("textEn", statistic.getTextEn());
+        response.put("textRu", statistic.getTextRu());
+        response.put("textUzCry", statistic.getTextUzCry());
+        response.put("percent", statistic.getPercent());
+        response.put("additional", statistic.getAdditional());
+        if (expand != null && !expand.isEmpty()) {
+            if (expand.contains("createdBy") && statistic.getCreatedBy() != null) {
+                response.put("createdBy", DtoConverter.createdUpdatedDto(statistic.getCreatedBy()));
+            }
+            if (expand.contains("updatedBy") && statistic.getUpdatedBy() != null) {
+                response.put("updatedBy", DtoConverter.createdUpdatedDto(statistic.getUpdatedBy()));
+            }
+        }
+        return response;
     }
 }

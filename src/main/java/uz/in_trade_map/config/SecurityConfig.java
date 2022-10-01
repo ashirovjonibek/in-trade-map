@@ -71,6 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/empty-spaces/**",
                         "/api/user/**",
                         "/api/company/**",
+                        "/api/banner/**",
+                        "/api/statistic/**",
                         "/api/product/**",
                         "/api/application/**",
                         "/api/news/**"

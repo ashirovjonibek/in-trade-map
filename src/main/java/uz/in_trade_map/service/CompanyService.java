@@ -6,12 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import uz.in_trade_map.dtos.Meta;
 import uz.in_trade_map.entity.*;
-import uz.in_trade_map.entity.enums.RoleName;
 import uz.in_trade_map.payload.AllApiResponse;
 import uz.in_trade_map.repository.*;
 import uz.in_trade_map.utils.AuthUser;
@@ -37,6 +34,18 @@ public class CompanyService {
 
     public ResponseEntity<?> save(CompanyRequest request) {
         try {
+            boolean existsByBrandNameAndActiveTrue = companyRepository.existsByBrandNameAndActiveTrue(request.getBrandName());
+            boolean existsByInnAndActiveTrue = companyRepository.existsByInnAndActiveTrue(request.getInn());
+            Map<String, String> valid = new HashMap<>();
+            if (existsByBrandNameAndActiveTrue) {
+                valid.put("brandName", "This brand name already exists");
+            }
+            if (existsByInnAndActiveTrue) {
+                valid.put("inn", "This inn already exists");
+            }
+            if (valid.size() > 0) {
+                return AllApiResponse.response(422, 0, "Valid error!", valid);
+            }
             Optional<District> byId = districtRepository.findById(request.getDistrictId());
             if (byId.isPresent()) {
                 Location location = locationRepository.save(new Location(byId.get(), request.getAddress(), request.getLat(), request.getLng()));
@@ -61,6 +70,18 @@ public class CompanyService {
     public ResponseEntity<?> edit(Integer id, CompanyRequest request, UUID[] oldPhotoIds, Integer oldImage, Integer oldLogo) {
         try {
             Optional<Company> companyOptional = companyRepository.findByIdAndActiveTrue(id);
+            Optional<Company> existsByBrandNameAndActiveTrue = companyRepository.findByBrandNameAndActiveTrue(request.getBrandName());
+            Optional<Company> existsByInnAndActiveTrue = companyRepository.findByInnAndActiveTrue(request.getInn());
+            Map<String, String> valid = new HashMap<>();
+            if (existsByBrandNameAndActiveTrue.isPresent() && !existsByBrandNameAndActiveTrue.get().getId().equals(id)) {
+                valid.put("brandName", "This brand name already exists");
+            }
+            if (existsByInnAndActiveTrue.isPresent()&& !existsByInnAndActiveTrue.get().getId().equals(id)) {
+                valid.put("inn", "This inn already exists");
+            }
+            if (valid.size() > 0) {
+                return AllApiResponse.response(422, 0, "Valid error!", valid);
+            }
             if (companyOptional.isPresent()) {
                 Optional<District> byId = districtRepository.findById(request.getDistrictId());
                 if (byId.isPresent()) {
@@ -146,13 +167,12 @@ public class CompanyService {
     ) {
         try {
             Pageable pageable = PageRequest.of(page - 1, size);
-            Authentication currentUser = AuthUser.getCurrentUser();
-            User user = (User) currentUser.getPrincipal();
+            AuthUser authUser = new AuthUser();
             Page<Company> companies = companyRepository.findAll(
                     where(
                             findByBrandName(brandName))
                             .and(findByName(search))
-                            .and(findIds(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(RoleName.ROLE_ADMIN.name())) ? null : new HashSet<>(Collections.singleton(user.getCompany().getId()))))
+                            .and(findIds(authUser.getUser() != null ? authUser.isAdmin() ? null : new HashSet<>(Collections.singleton(authUser.getUser().getCompany().getId())) : null))
                             .and(findByAddress(address))
                             .and(findByLocationId(locationId))
                             .and(findByInn(inn))

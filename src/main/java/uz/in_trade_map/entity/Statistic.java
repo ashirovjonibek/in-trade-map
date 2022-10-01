@@ -1,7 +1,6 @@
 package uz.in_trade_map.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,43 +12,24 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Role implements Serializable {
-
+public class Statistic implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String nameUz;
-
-    private String nameRu;
-
-    private String nameUzCry;
-
-    private String nameEn;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Permissions> permissions;
-
-    @Column(unique = true)
-    private String roleName;
-
-    @ManyToOne
-    private Role parent;
-
-    private boolean active = true;
-
+    @OrderBy
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
+    @Column(nullable = false)
     private Timestamp updatedAt;
 
     @CreatedBy
@@ -58,13 +38,29 @@ public class Role implements Serializable {
     @LastModifiedBy
     private User updatedBy;
 
-    public Role(String nameUz, String nameRu, String nameUzCry, String nameEn, List<Permissions> permissions, String roleName,Role parent) {
-        this.nameUz = nameUz;
-        this.nameRu = nameRu;
-        this.nameUzCry = nameUzCry;
-        this.nameEn = nameEn;
-        this.permissions = permissions;
-        this.roleName = roleName;
-        this.parent=parent;
-    }
+    private boolean active = true;
+
+    private String titleUz;
+
+    private String titleRu;
+
+    private String titleEn;
+
+    private String titleUzCry;
+
+    @Column(columnDefinition = "text")
+    private String textUz;
+
+    @Column(columnDefinition = "text")
+    private String textRu;
+
+    @Column(columnDefinition = "text")
+    private String textEn;
+
+    @Column(columnDefinition = "text")
+    private String textUzCry;
+
+    private short percent;
+
+    private String additional;
 }
