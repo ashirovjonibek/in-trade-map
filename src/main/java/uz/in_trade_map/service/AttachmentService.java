@@ -146,7 +146,7 @@ public class AttachmentService {
                 }
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(attachment.get().getContentType()))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + attachment.get().getFileName() + "\"")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + attachment.get().getFileName() + "\"")
                         .body(fileUrlResource);
             }
         } else {

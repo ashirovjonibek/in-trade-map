@@ -18,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AttachmentController {
     private final AttachmentService attachmentService;
+
     @GetMapping("/{id}")
     public HttpEntity<?> getFile(@PathVariable UUID id) {
         return attachmentService.getFile(id);
