@@ -39,7 +39,7 @@ public class ApplicationService extends Validator<ApplicationRequest> {
             phoneNumber = "+" + phoneNumber.trim();
         }
         boolean existsByPhoneNumber = userRepository.existsByPhoneNumberAndActiveTrue(phoneNumber);
-        boolean exists = applicationRepository.existsByBossPhoneAndActiveTrue(phoneNumber);
+        boolean exists = applicationRepository.existsByBossPhoneAndIsConfirmAndActiveTrue(phoneNumber, 0);
         if (existsByPhoneNumber || exists) {
             String m = "Ushbu raqam avval ro'yhatdan o'tgan!";
             String m1 = "Ushbu raqamdan avval arza yuborilgan!";
