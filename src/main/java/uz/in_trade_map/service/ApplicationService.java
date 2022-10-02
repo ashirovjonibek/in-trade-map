@@ -38,7 +38,7 @@ public class ApplicationService extends Validator<ApplicationRequest> {
         if (!phoneNumber.trim().startsWith("+")) {
             phoneNumber = "+" + phoneNumber.trim();
         }
-        boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
+        boolean existsByPhoneNumber = userRepository.existsByPhoneNumberAndActiveTrue(phoneNumber);
         boolean exists = applicationRepository.existsByBossPhoneAndActiveTrue(phoneNumber);
         if (existsByPhoneNumber || exists) {
             String m = "Ushbu raqam avval ro'yhatdan o'tgan!";
@@ -66,8 +66,8 @@ public class ApplicationService extends Validator<ApplicationRequest> {
     public ResponseEntity<?> create(ApplicationRequest request) {
         try {
             Map<String, Object> valid = valid(request);
-            boolean existsByPhoneNumber = userRepository.existsByPhoneNumber(request.getBossPhone());
-            boolean existsByEmail = userRepository.existsByEmail(request.getBossEmail());
+            boolean existsByPhoneNumber = userRepository.existsByPhoneNumberAndActiveTrue(request.getBossPhone());
+            boolean existsByEmail = userRepository.existsByEmailAndActiveTrue(request.getBossEmail());
             boolean existsByBrandNameAndActiveTrue = companyRepository.existsByBrandNameAndActiveTrue(request.getBrandName());
             boolean existsByInnAndActiveTrue = companyRepository.existsByInnAndActiveTrue(request.getInn());
             if (existsByPhoneNumber) valid.put("bossPhone", "Boss phone is exists!");
