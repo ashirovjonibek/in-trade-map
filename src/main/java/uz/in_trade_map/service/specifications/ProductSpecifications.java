@@ -50,23 +50,23 @@ public class ProductSpecifications {
     }
 
     public static Specification<Product> findByNameUz(String nameUz) {
-        return (root, query, builder) -> nameUz != null ? builder.like(root
-                .get("nameUz"), "%" + nameUz + "%") : query.getGroupRestriction();
+        return (root, query, builder) -> nameUz != null ? builder.like(builder.lower(root
+                .get("nameUz")), "%" + nameUz.toLowerCase() + "%") : query.getGroupRestriction();
     }
 
     public static Specification<Product> findByNameRu(String nameRu) {
-        return (root, query, builder) -> nameRu != null ? builder.like(root
-                .get("nameRu"), "%" + nameRu + "%") : query.getGroupRestriction();
+        return (root, query, builder) -> nameRu != null ? builder.like(builder.lower(root
+                .get("nameRu")), "%" + nameRu.toLowerCase() + "%") : query.getGroupRestriction();
     }
 
     public static Specification<Product> findByNameEn(String nameEn) {
-        return (root, query, builder) -> nameEn != null ? builder.like(root
-                .get("nameEn"), "%" + nameEn + "%") : query.getGroupRestriction();
+        return (root, query, builder) -> nameEn != null ? builder.like(builder.lower(root
+                .get("nameEn")), "%" + nameEn.toLowerCase() + "%") : query.getGroupRestriction();
     }
 
     public static Specification<Product> findByNameUzCry(String nameUzCry) {
-        return (root, query, builder) -> nameUzCry != null ? builder.like(root
-                .get("nameUzCry"), "%" + nameUzCry + "%") : query.getGroupRestriction();
+        return (root, query, builder) -> nameUzCry != null ? builder.like(builder.lower(root
+                .get("nameUzCry")), "%" + nameUzCry.toLowerCase() + "%") : query.getGroupRestriction();
     }
 
     public static Specification<Product> findByConfirmStatus(Integer status) {

@@ -25,7 +25,7 @@ import java.util.UUID;
 @Builder
 @Entity(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     @GeneratedValue(generator = "uuid2")

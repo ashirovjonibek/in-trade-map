@@ -62,9 +62,6 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     PermissionsRepository permissionsRepository;
 
-    @Autowired
-    ChatRepository chatRepository;
-
     @Override
     public void run(String... args) throws Exception {
         if (mode.equals("always")) {
